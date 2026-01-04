@@ -257,17 +257,152 @@ Access the admin panel at `/lakay`:
 | `GET /api/sectors` | List sectors |
 | `GET /api/cities` | Search cities |
 
-## Deployment
+## Deployment to k3s (Raspberry Pi)
 
-The application is designed to run on a k3s cluster (Raspberry Pi 5).
+The application is deployed to a k3s cluster on Raspberry Pi 5 with Cloudflare Tunnel for external access.
+
+### Architecture
+
+```
+Internet -> Cloudflare -> Cloudflare Tunnel -> k3s Ingress -> Rails App -> PostgreSQL
+                         (cloudflared pod)     (Traefik)      (job509)   (job509-postgres)
+```
+
+### Kubernetes Manifests
+
+```
+k8s/
+├── deployment.yaml        # Rails app deployment + service + PVC
+├── postgres.yaml          # PostgreSQL deployment + service + PVC
+├── ingress.yaml           # Traefik ingress for job509.polym.at
+├── secrets.yaml.example   # Template for secrets (copy and fill in)
+├── github-actions-sa.yaml # Service account for CI/CD
+├── CLOUDFLARE_SETUP.md    # Cloudflare tunnel instructions
+└── README.md              # Detailed k8s setup docs
+```
+
+### Step 1: Create Secrets
 
 ```bash
-# Build Docker image for ARM64
-docker buildx build --platform linux/arm64 -t your-registry/job509:latest --push .
+# Copy the template
+cp k8s/secrets.yaml.example k8s/secrets.yaml
 
-# Deploy to k3s
-kubectl apply -f k8s/
+# Edit with your values:
+# - RAILS_MASTER_KEY: contents of config/master.key
+# - POSTGRES_PASSWORD: generate a secure password
+# - DATABASE_URL: postgres://job509:<password>@job509-postgres:5432/job509_production
+# - SECRET_KEY_BASE: run `bin/rails secret`
+
+# Apply to cluster
+kubectl apply -f k8s/secrets.yaml
 ```
+
+### Step 2: Create GHCR Pull Secret
+
+```bash
+kubectl create secret docker-registry ghcr-login-secret \
+  --docker-server=ghcr.io \
+  --docker-username=YOUR_GITHUB_USERNAME \
+  --docker-password=YOUR_GITHUB_PAT \
+  --docker-email=YOUR_EMAIL
+```
+
+### Step 3: Deploy PostgreSQL
+
+```bash
+kubectl apply -f k8s/postgres.yaml
+
+# Wait for it to be ready
+kubectl rollout status deployment/job509-postgres
+```
+
+### Step 4: Deploy the Application
+
+```bash
+kubectl apply -f k8s/deployment.yaml
+kubectl apply -f k8s/ingress.yaml
+
+# Wait for deployment
+kubectl rollout status deployment/job509
+```
+
+### Step 5: Configure Cloudflare Tunnel
+
+The Cloudflare Tunnel config is in the pistats project. Add the job509 route:
+
+```bash
+# In /Users/luc/code/personal/pistats/k8s/cloudfared-deployment.yaml
+# The job509.polym.at route has already been added to the ConfigMap
+
+# Apply the updated config
+cd /Users/luc/code/personal/pistats
+kubectl apply -f k8s/cloudfared-deployment.yaml
+kubectl rollout restart deployment/cloudflared -n cloudflare
+```
+
+### Step 6: Add DNS Record in Cloudflare
+
+```bash
+# Using cloudflared CLI
+cloudflared tunnel route dns aaa2e315-4ded-4ff5-a0e6-8d0965f02d42 job509.polym.at
+
+# Or manually in Cloudflare Dashboard:
+# Add CNAME: job509 -> aaa2e315-4ded-4ff5-a0e6-8d0965f02d42.cfargotunnel.com
+```
+
+### Step 7: Verify Deployment
+
+```bash
+# Check pods are running
+kubectl get pods -l app=job509
+kubectl get pods -l app=job509-postgres
+
+# Check the health endpoint
+curl https://job509.polym.at/up
+
+# View logs
+kubectl logs -f deployment/job509
+```
+
+### CI/CD with GitHub Actions
+
+Pushing to `main` triggers automatic build and deployment:
+
+1. **docker-build.yml** - Builds ARM64 image, pushes to GHCR
+2. **deploy.yml** - Applies k8s manifests, restarts deployment
+
+#### Required GitHub Secrets
+
+| Secret | Description |
+|--------|-------------|
+| `KUBECONFIG_DATA` | Base64-encoded kubeconfig with cluster access |
+
+See `k8s/github-actions-sa.yaml` for service account setup.
+
+### Useful Commands
+
+```bash
+# Rails console in cluster
+kubectl exec -it deployment/job509 -- bin/rails console
+
+# Database console
+kubectl exec -it deployment/job509-postgres -- psql -U job509 job509_production
+
+# Restart deployment
+kubectl rollout restart deployment/job509
+
+# View events
+kubectl get events --sort-by='.lastTimestamp' | grep job509
+```
+
+### Resource Limits
+
+Optimized for Raspberry Pi 5:
+
+| Component | Memory (request/limit) | CPU (request/limit) |
+|-----------|------------------------|---------------------|
+| Rails App | 256Mi / 512Mi | 100m / 500m |
+| PostgreSQL | 128Mi / 256Mi | 50m / 250m |
 
 ## License
 
