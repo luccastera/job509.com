@@ -34,7 +34,7 @@ gem "prawn", "~> 2.5"
 gem "prawn-table", "~> 0.2"
 
 # Payment Processing
-gem "paypal-server-sdk", "~> 0.6"
+gem "paypal-server-sdk", "~> 2.1"
 
 # SMS
 gem "twilio-ruby", "~> 7.0"
