@@ -1,0 +1,26 @@
+<%= form_with model: [:lakay, featured_recruiter], class: "space-y-6" do |f| %>
+  <% if featured_recruiter.errors.any? %>
+    <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3">
+      <ul class="list-disc list-inside">
+        <% featured_recruiter.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :name, class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+    <%= f.text_field :name, class: "w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:border-job-blue" %>
+  </div>
+
+  <div>
+    <%= f.label :website_url, "Website URL", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+    <%= f.url_field :website_url, class: "w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:border-job-blue" %>
+  </div>
+
+  <div class="flex justify-end space-x-4 pt-4">
+    <%= link_to "Cancel", lakay_featured_recruiters_path, class: "px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors" %>
+    <%= f.submit class: "px-4 py-2 bg-job-blue hover:bg-job-blue-dark text-white font-medium transition-colors cursor-pointer" %>
+  </div>
+<% end %>

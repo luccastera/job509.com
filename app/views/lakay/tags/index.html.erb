@@ -1,0 +1,62 @@
+<div class="flex justify-between items-center mb-6">
+  <h1 class="text-2xl font-bold text-gray-900 dark:text-white"><%= t("admin.tags") %></h1>
+  <%= link_to "New Tag", new_lakay_tag_path, class: "bg-job-blue hover:bg-job-blue-dark text-white px-4 py-2 font-medium transition-colors" %>
+</div>
+
+<div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
+  <table class="w-full">
+    <thead class="bg-gray-50 dark:bg-gray-800">
+      <tr>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Icon</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Name</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Description</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Users</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Event</th>
+        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+      <% @tags.each do |tag| %>
+        <tr class="hover:bg-gray-50 dark:hover:bg-gray-800">
+          <td class="px-6 py-4">
+            <% if tag.icon.attached? %>
+              <%= image_tag tag.icon, class: "h-8 w-8 object-contain" %>
+            <% else %>
+              <span class="text-gray-400">—</span>
+            <% end %>
+          </td>
+          <td class="px-6 py-4 text-sm font-medium text-gray-900 dark:text-white">
+            <%= link_to tag.name, lakay_tag_path(tag), class: "hover:text-job-blue" %>
+          </td>
+          <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+            <%= truncate(tag.description, length: 50) if tag.description.present? %>
+          </td>
+          <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+            <%= tag.users.count %>
+          </td>
+          <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+            <% if tag.event.present? %>
+              <%= link_to tag.event.name, lakay_event_path(tag.event), class: "text-job-blue hover:underline" %>
+            <% else %>
+              <span class="text-gray-400">—</span>
+            <% end %>
+          </td>
+          <td class="px-6 py-4 text-right text-sm space-x-2">
+            <%= link_to t("actions.edit"), edit_lakay_tag_path(tag), class: "text-job-blue hover:underline" %>
+            <%= button_to t("actions.delete"), lakay_tag_path(tag), method: :delete, data: { turbo_confirm: t("helpers.confirm") }, class: "text-job-red hover:underline" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <% if @tags.empty? %>
+    <div class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">
+      No tags found.
+    </div>
+  <% end %>
+</div>
+
+<div class="mt-4">
+  <%== pagy_nav(@pagy) if @pagy.pages > 1 %>
+</div>

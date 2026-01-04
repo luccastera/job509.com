@@ -1,0 +1,39 @@
+<div class="max-w-4xl mx-auto">
+  <h1 class="text-3xl font-bold text-job-blue-dark mb-8"><%= t("applications.my_applications") %></h1>
+
+  <% if @applics.any? %>
+    <div class="space-y-4">
+      <% @applics.each do |applic| %>
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <div class="flex justify-between items-start">
+            <div>
+              <h2 class="text-xl font-bold text-job-blue-dark">
+                <%= link_to applic.job.title, applic.job, class: "hover:text-job-blue" %>
+              </h2>
+              <p class="text-gray-600"><%= applic.job.company %></p>
+              <p class="text-sm text-gray-500 mt-2">
+                <%= t("applications.applied_on") %>: <%= l(applic.created_at, format: :short) %>
+              </p>
+            </div>
+            <div>
+              <% if applic.star? %>
+                <span class="inline-flex items-center px-3 py-1 rounded-full text-sm bg-yellow-100 text-yellow-800">
+                  <%= t("applications.starred") %>
+                </span>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="mt-8">
+      <%== pagy_nav(@pagy) if @pagy.pages > 1 %>
+    </div>
+  <% else %>
+    <div class="bg-white rounded-lg shadow-md p-8 text-center">
+      <p class="text-gray-500 text-lg">You haven't applied to any jobs yet.</p>
+      <%= link_to t("jobs.search_placeholder"), jobs_path, class: "inline-block mt-4 text-job-blue hover:text-job-blue-dark" %>
+    </div>
+  <% end %>
+</div>

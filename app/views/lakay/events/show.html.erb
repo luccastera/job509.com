@@ -1,0 +1,49 @@
+<div class="mb-6">
+  <%= link_to "&larr; Back to Events".html_safe, lakay_events_path, class: "text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors" %>
+</div>
+
+<div class="flex justify-between items-start mb-8">
+  <div>
+    <h1 class="text-2xl font-bold text-gray-900 dark:text-white"><%= @event.name %></h1>
+    <p class="text-gray-500 dark:text-gray-400 mt-1">
+      <%= @event.starts_at&.strftime("%B %d, %Y at %l:%M %p") %>
+      <% if @event.ends_at.present? %>
+        - <%= @event.ends_at&.strftime("%l:%M %p") %>
+      <% end %>
+    </p>
+  </div>
+  <div class="space-x-4">
+    <%= link_to "Edit", edit_lakay_event_path(@event), class: "text-job-blue hover:underline" %>
+    <%= link_to "Attendees (#{@event.attendees.count})", attendees_lakay_event_path(@event), class: "text-job-blue hover:underline" %>
+  </div>
+</div>
+
+<div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 p-6 space-y-6">
+  <div>
+    <h2 class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Location</h2>
+    <p class="text-gray-900 dark:text-white"><%= @event.location || "TBD" %></p>
+  </div>
+
+  <% if @event.cost.present? && @event.cost > 0 %>
+    <div>
+      <h2 class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Cost</h2>
+      <p class="text-gray-900 dark:text-white"><%= number_to_currency(@event.cost) %></p>
+    </div>
+  <% end %>
+
+  <% if @event.description.present? %>
+    <div>
+      <h2 class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Description</h2>
+      <div class="text-gray-900 dark:text-white prose dark:prose-invert max-w-none">
+        <%= simple_format(@event.description) %>
+      </div>
+    </div>
+  <% end %>
+
+  <% if @event.youtube_url.present? %>
+    <div>
+      <h2 class="text-sm font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-2">Video</h2>
+      <p><%= link_to @event.youtube_url, @event.youtube_url, target: "_blank", class: "text-job-blue hover:underline" %></p>
+    </div>
+  <% end %>
+</div>

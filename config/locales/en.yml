@@ -1,0 +1,374 @@
+en:
+  # Site-wide
+  site:
+    name: "JOB509"
+    tagline: "Haiti's Premier Job Board"
+    description: "Find your next career opportunity in Haiti"
+
+  # Navigation
+  nav:
+    home: "Home"
+    jobs: "Jobs"
+    about: "About"
+    faq: "FAQ"
+    contact: "Contact"
+    advertise: "Advertise"
+    login: "Login"
+    logout: "Logout"
+    signup: "Sign Up"
+    my_account: "My Account"
+    my_resume: "My Resume"
+    my_jobs: "My Jobs"
+    post_job: "Post a Job"
+    employer_signup: "Employer Sign Up"
+    job_seeker_signup: "Job Seeker Sign Up"
+
+  # Common actions
+  actions:
+    save: "Save"
+    cancel: "Cancel"
+    edit: "Edit"
+    delete: "Delete"
+    view: "View"
+    search: "Search"
+    filter: "Filter"
+    apply: "Apply"
+    submit: "Submit"
+    back: "Back"
+    next: "Next"
+    previous: "Previous"
+    confirm: "Confirm"
+    print: "Print"
+    download: "Download"
+    share: "Share"
+    add: "Add"
+    remove: "Remove"
+    close: "Close"
+
+  # Flash messages
+  flash:
+    created: "%{resource} was successfully created."
+    updated: "%{resource} was successfully updated."
+    deleted: "%{resource} was successfully deleted."
+    error: "An error occurred. Please try again."
+    not_authorized: "You are not authorized to perform this action."
+    login_required: "Please log in to continue."
+    password_reset_sent: "Password reset instructions have been sent to your email."
+    password_reset_success: "Your password has been successfully reset."
+
+  # Jobs
+  jobs:
+    title: "Jobs"
+    job: "Job"
+    search_placeholder: "Search jobs..."
+    filter_by_sector: "Filter by sector"
+    filter_by_city: "Filter by city"
+    all_sectors: "All Sectors"
+    all_cities: "All Cities"
+    posted: "Posted"
+    expires: "Expires"
+    apply_now: "Apply Now"
+    apply_external: "Apply on Company Website"
+    company: "Company"
+    location: "Location"
+    job_type: "Job Type"
+    sector: "Sector"
+    description: "Description"
+    qualifications: "Qualifications"
+    no_jobs_found: "No jobs found matching your criteria."
+    post_new: "Post a New Job"
+    my_posted_jobs: "My Posted Jobs"
+    applications_received: "Applications Received"
+    pending_approval: "Pending Approval"
+    approved: "Approved"
+    expired: "Expired"
+
+  # Resume
+  resume:
+    title: "Resume"
+    my_resume: "My Resume"
+    edit_resume: "Edit Resume"
+    preview: "Preview"
+    download_pdf: "Download PDF"
+    objective: "Objective"
+    personal_info: "Personal Information"
+    education: "Education"
+    experience: "Work Experience"
+    skills: "Skills"
+    languages: "Languages"
+    references: "References"
+    add_education: "Add Education"
+    add_experience: "Add Experience"
+    add_skill: "Add Skill"
+    add_language: "Add Language"
+    add_reference: "Add Reference"
+    years_of_experience: "Years of Experience"
+    current_position: "Current Position"
+    diploma: "Diploma/Degree"
+    school: "School/University"
+    field_of_study: "Field of Study"
+    graduation_year: "Graduation Year"
+    company: "Company"
+    position: "Position"
+    from: "From"
+    to: "To"
+    present: "Present"
+    speaking: "Speaking"
+    writing: "Writing"
+    basic: "Basic"
+    intermediate: "Intermediate"
+    fluent: "Fluent"
+
+  # Applications
+  applications:
+    title: "Applications"
+    my_applications: "My Applications"
+    cover_letter: "Cover Letter"
+    applied_on: "Applied On"
+    status: "Status"
+    pending: "Pending"
+    reviewed: "Reviewed"
+    starred: "Starred"
+    hidden: "Hidden"
+
+  # Users
+  users:
+    job_seeker: "Job Seeker"
+    employer: "Employer"
+    first_name: "First Name"
+    last_name: "Last Name"
+    email: "Email"
+    phone: "Phone"
+    password: "Password"
+    password_confirmation: "Confirm Password"
+    current_password: "Current Password"
+    new_password: "New Password"
+    remember_me: "Remember Me"
+    forgot_password: "Forgot Password?"
+    reset_password: "Reset Password"
+    change_password: "Change Password"
+
+  # Events
+  events:
+    title: "Events"
+    upcoming: "Upcoming Events"
+    past: "Past Events"
+    register: "Register"
+    location: "Location"
+    date: "Date"
+    time: "Time"
+    cost: "Cost"
+    free: "Free"
+    attendees: "Attendees"
+
+  # Static pages
+  pages:
+    about:
+      title: "About JOB509"
+      intro: "JOB509 provides information on job opportunities for Haitian professionals inside or outside of Haiti. In addition to giving you access to quality job offers, our solution helps you create a resume that meets all international standards."
+      objective_title: "Objective"
+      objective: "To facilitate and simplify the connection between candidates and recruiters in all sectors of activity."
+      for_candidates_title: "For Candidates"
+      for_candidates: "On JOB509, you have access to a large number of job offers with ease. Each listing is thoroughly reviewed by the JOB509 team to ensure its relevance. Daily updates to our database guarantee the high quality of our service (removal of filled positions, addition of new offers, etc.). Once your profile is created, you will be contacted by email and/or SMS as soon as a listing matches your skills. You can quickly apply for the job that suits you and your application will be reviewed as a priority. Access to our resume database is strictly confidential - by applying to a job offer, the candidate makes their resume viewable by that company."
+      for_recruiters_title: "For Recruiters"
+      for_recruiters: "To simplify your search, you receive resumes directly on your JOB509 account. An initial selection of candidates matching your offer is then proposed to you. Your recruitment process is therefore optimized. The flexibility of our tool and the automation of certain tasks allows you to more easily find the ideal recruit."
+    faq:
+      title: "Frequently Asked Questions"
+      q1: "How do I create an account?"
+      a1: "Click on \"Sign Up\" in the top navigation and fill out the registration form. You can register as a job seeker or an employer."
+      q2: "How do I apply for a job?"
+      a2: "First, make sure you have created your resume. Then, browse the job listings and click \"Apply Now\" on any job that interests you."
+      q3: "Is it free to post jobs?"
+      a3: "Please contact us for pricing information on job postings. We offer various packages to meet your hiring needs."
+      q4: "How long will my job be posted?"
+      a4: "Job listings are active for 30 days from the posting date. You can extend or renew your listing as needed."
+      q5: "Can I edit my resume after submitting?"
+      a5: "Yes, you can update your resume at any time by going to \"My Resume\" in the navigation menu."
+    contact:
+      title: "Contact Us"
+      get_in_touch: "Get in Touch"
+      intro: "Have questions or feedback? We'd love to hear from you."
+      email: "Email"
+      phone: "Phone"
+      address: "Address"
+      office_hours: "Office Hours"
+      weekdays: "Monday - Friday"
+      saturday: "Saturday"
+      sunday: "Sunday"
+      closed: "Closed"
+    advertise:
+      title: "Advertise with Us"
+      intro: "Reach thousands of qualified job seekers and employers through JOB509's advertising opportunities."
+      options_title: "Advertising Options"
+      banner_ads:
+        title: "Banner Ads"
+        description: "Display your brand prominently on our homepage and job listing pages."
+      featured_recruiter:
+        title: "Featured Recruiter"
+        description: "Showcase your company as a featured employer with logo placement."
+      sponsored_jobs:
+        title: "Sponsored Jobs"
+        description: "Get priority placement for your job listings at the top of search results."
+      email_campaigns:
+        title: "Email Campaigns"
+        description: "Reach our database of job seekers directly through targeted email campaigns."
+      contact_cta: "Contact us for pricing and availability"
+
+  # Admin
+  admin:
+    dashboard: "Dashboard"
+    statistics: "Statistics"
+    jobs: "Jobs"
+    job_seekers: "Job Seekers"
+    employers: "Employers"
+    applications: "Applications"
+    events: "Events"
+    coupons: "Coupons"
+    tags: "Tags"
+    lists: "Lists"
+    administrators: "Administrators"
+    featured_recruiters: "Featured Recruiters"
+    approve: "Approve"
+    reject: "Reject"
+    recommend: "Recommend"
+    unrecommend: "Unrecommend"
+    bulk_sms: "Bulk SMS"
+    accounting: "Accounting"
+
+  # Form labels
+  activerecord:
+    models:
+      user: "User"
+      job: "Job"
+      resume: "Resume"
+      applic: "Application"
+      education: "Education"
+      work_experience: "Work Experience"
+      skill: "Skill"
+      language_skill: "Language Skill"
+      referral: "Reference"
+      event: "Event"
+      attendee: "Attendee"
+    attributes:
+      user:
+        email: "Email"
+        password: "Password"
+        password_confirmation: "Password confirmation"
+        firstname: "First name"
+        lastname: "Last name"
+        phone: "Phone"
+        alternate_phone: "Alternate phone"
+        role: "Role"
+      job:
+        title: "Title"
+        company: "Company"
+        company_url: "Company website"
+        company_description: "Company description"
+        description: "Job description"
+        qualifications: "Qualifications"
+        post_date: "Post date"
+        apply_url: "Application URL"
+      resume:
+        objective: "Objective"
+        sex: "Gender"
+        birth_year: "Birth year"
+        years_of_experience: "Years of experience"
+        has_drivers_license: "Has driver's license"
+        address1: "Address line 1"
+        address2: "Address line 2"
+        postal_code: "Postal code"
+      education:
+        diploma: "Diploma/Degree"
+        school: "School"
+        graduation_year: "Graduation year"
+        field_of_study: "Field of study"
+        is_completed: "Completed"
+        comments: "Comments"
+      work_experience:
+        company: "Company"
+        title: "Title"
+        description: "Description"
+        starting_month: "Start month"
+        starting_year: "Start year"
+        ending_month: "End month"
+        ending_year: "End year"
+        is_current: "Current position"
+        monthly_salary: "Monthly salary"
+      skill:
+        description: "Skill"
+      language_skill:
+        speaking_level: "Speaking level"
+        writing_level: "Writing level"
+      referral:
+        firstname: "First name"
+        lastname: "Last name"
+        phone: "Phone"
+        email: "Email"
+        relationship: "Relationship"
+
+  # Helpers
+  helpers:
+    select:
+      prompt: "Select..."
+    submit:
+      save: "Save"
+      create: "Create"
+      update: "Update"
+      delete: "Delete"
+    confirm: "Are you sure?"
+
+  # Date and time formats
+  date:
+    formats:
+      default: "%B %d, %Y"
+      short: "%b %d"
+      long: "%B %d, %Y"
+    day_names:
+      - Sunday
+      - Monday
+      - Tuesday
+      - Wednesday
+      - Thursday
+      - Friday
+      - Saturday
+    abbr_day_names:
+      - Sun
+      - Mon
+      - Tue
+      - Wed
+      - Thu
+      - Fri
+      - Sat
+    month_names:
+      - ~
+      - January
+      - February
+      - March
+      - April
+      - May
+      - June
+      - July
+      - August
+      - September
+      - October
+      - November
+      - December
+    abbr_month_names:
+      - ~
+      - Jan
+      - Feb
+      - Mar
+      - Apr
+      - May
+      - Jun
+      - Jul
+      - Aug
+      - Sep
+      - Oct
+      - Nov
+      - Dec
+  time:
+    formats:
+      default: "%B %d, %Y at %H:%M"
+      short: "%b %d, %H:%M"
+      long: "%B %d, %Y at %H:%M"

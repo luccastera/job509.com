@@ -1,0 +1,85 @@
+<div class="max-w-6xl mx-auto">
+  <h1 class="text-3xl font-bold text-job-blue-dark dark:text-job-blue-light mb-8"><%= t("events.title") %></h1>
+
+  <% if @upcoming_events.any? %>
+    <h2 class="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4"><%= t("events.upcoming") %></h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
+      <% @upcoming_events.each do |event| %>
+        <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <% if event.small_image.attached? %>
+            <%= image_tag event.small_image, class: "w-full h-48 object-cover" %>
+          <% else %>
+            <div class="w-full h-48 bg-gradient-to-r from-job-blue to-job-blue-dark flex items-center justify-center">
+              <span class="text-white text-4xl font-bold"><%= event.name.first(2).upcase %></span>
+            </div>
+          <% end %>
+
+          <div class="p-6">
+            <h3 class="text-lg font-bold text-gray-800 dark:text-white mb-2">
+              <%= link_to event.name, event, class: "hover:text-job-blue dark:hover:text-job-blue-light" %>
+            </h3>
+
+            <div class="text-sm text-gray-600 dark:text-gray-400 space-y-1 mb-4">
+              <p>
+                <strong><%= t("events.date") %>:</strong>
+                <%= event.starts_at.strftime("%B %d, %Y") %>
+              </p>
+              <p>
+                <strong><%= t("events.time") %>:</strong>
+                <%= event.starts_at.strftime("%I:%M %p") %>
+              </p>
+              <% if event.location.present? %>
+                <p>
+                  <strong><%= t("events.location") %>:</strong>
+                  <%= event.location %>
+                </p>
+              <% end %>
+              <p>
+                <strong><%= t("events.cost") %>:</strong>
+                <% if event.cost.to_f > 0 %>
+                  <%= number_to_currency(event.cost, unit: "HTG ") %>
+                <% else %>
+                  <span class="text-green-600 dark:text-green-400"><%= t("events.free") %></span>
+                <% end %>
+              </p>
+            </div>
+
+            <%= link_to t("events.register"), signup_event_path(event), class: "block w-full bg-job-blue hover:bg-job-blue-dark text-white text-center py-2 font-medium transition" %>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if @past_events.any? %>
+    <h2 class="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4"><%= t("events.past") %></h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <% @past_events.each do |event| %>
+        <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 overflow-hidden opacity-75">
+          <% if event.small_image.attached? %>
+            <%= image_tag event.small_image, class: "w-full h-32 object-cover grayscale" %>
+          <% else %>
+            <div class="w-full h-32 bg-gray-400 dark:bg-gray-700 flex items-center justify-center">
+              <span class="text-white text-2xl font-bold"><%= event.name.first(2).upcase %></span>
+            </div>
+          <% end %>
+
+          <div class="p-4">
+            <h3 class="font-bold text-gray-700 dark:text-gray-300 mb-1">
+              <%= link_to event.name, event, class: "hover:text-job-blue dark:hover:text-job-blue-light" %>
+            </h3>
+            <p class="text-sm text-gray-500 dark:text-gray-400">
+              <%= event.starts_at.strftime("%B %d, %Y") %>
+            </p>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <% if @upcoming_events.empty? && @past_events.empty? %>
+    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 p-8 text-center">
+      <p class="text-gray-500 dark:text-gray-400">No events at this time. Check back later!</p>
+    </div>
+  <% end %>
+</div>

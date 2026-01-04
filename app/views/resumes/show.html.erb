@@ -1,0 +1,171 @@
+<div class="max-w-4xl mx-auto">
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold text-job-blue-dark"><%= @resume.user.full_name %></h1>
+    <div class="space-x-4">
+      <%= link_to t("resume.download_pdf"), pdf_resume_path(format: :pdf), class: "bg-job-blue hover:bg-job-blue-light text-white px-4 py-2 rounded-lg transition" %>
+      <%= link_to t("nav.back"), :back, class: "text-gray-600 hover:text-job-blue" %>
+    </div>
+  </div>
+
+  <%# Contact Information %>
+  <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+    <h2 class="text-xl font-bold text-job-blue-dark mb-4"><%= t("resume.sections.contact") %></h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-700">
+      <div>
+        <span class="font-medium"><%= t("user.fields.email") %>:</span>
+        <%= @resume.user.email %>
+      </div>
+      <div>
+        <span class="font-medium"><%= t("user.fields.phone") %>:</span>
+        <%= @resume.user.phone %>
+      </div>
+      <% if @resume.city || @resume.country %>
+        <div>
+          <span class="font-medium"><%= t("resume.fields.location") %>:</span>
+          <%= [@resume.city&.name, @resume.country&.name].compact.join(", ") %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <%# Basic Info %>
+  <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+    <h2 class="text-xl font-bold text-job-blue-dark mb-4"><%= t("resume.sections.basic_info") %></h2>
+
+    <% if @resume.objective.present? %>
+      <div class="mb-4">
+        <h3 class="font-medium text-gray-800"><%= t("resume.fields.objective") %></h3>
+        <p class="text-gray-700 mt-1"><%= @resume.objective %></p>
+      </div>
+    <% end %>
+
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+      <% if @resume.sector %>
+        <div>
+          <span class="text-gray-500"><%= t("resume.fields.sector") %></span>
+          <p class="font-medium"><%= @resume.sector.name %></p>
+        </div>
+      <% end %>
+      <% if @resume.years_of_experience %>
+        <div>
+          <span class="text-gray-500"><%= t("resume.fields.years_of_experience") %></span>
+          <p class="font-medium"><%= @resume.years_of_experience %> <%= t("resume.years") %></p>
+        </div>
+      <% end %>
+      <% if @resume.nationality %>
+        <div>
+          <span class="text-gray-500"><%= t("resume.fields.nationality") %></span>
+          <p class="font-medium"><%= @resume.nationality.name %></p>
+        </div>
+      <% end %>
+      <% if @resume.has_drivers_license %>
+        <div>
+          <span class="text-gray-500"><%= t("resume.fields.has_drivers_license") %></span>
+          <p class="font-medium text-green-600"><%= t("yes") %></p>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <%# Education %>
+  <% if @resume.educations.any? %>
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+      <h2 class="text-xl font-bold text-job-blue-dark mb-4"><%= t("resume.sections.education") %></h2>
+      <div class="space-y-4">
+        <% @resume.educations.each do |education| %>
+          <div class="border-l-4 border-job-blue pl-4">
+            <h3 class="font-bold text-gray-800"><%= education.diploma %></h3>
+            <p class="text-job-blue"><%= education.school %></p>
+            <p class="text-gray-600 text-sm">
+              <%= education.field_of_study %>
+              <% if education.graduation_year.present? %>
+                - <%= education.graduation_year %>
+              <% end %>
+              <% unless education.is_completed %>
+                <span class="text-yellow-600">(<%= t("resume.in_progress") %>)</span>
+              <% end %>
+            </p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <%# Work Experience %>
+  <% if @resume.work_experiences.any? %>
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+      <h2 class="text-xl font-bold text-job-blue-dark mb-4"><%= t("resume.sections.work_experience") %></h2>
+      <div class="space-y-6">
+        <% @resume.work_experiences.each do |experience| %>
+          <div class="border-l-4 border-job-blue pl-4">
+            <h3 class="font-bold text-gray-800"><%= experience.title %></h3>
+            <p class="text-job-blue"><%= experience.company %></p>
+            <p class="text-gray-600 text-sm">
+              <%= [experience.starting_month, experience.starting_year].compact.join("/") %>
+              -
+              <% if experience.is_current %>
+                <%= t("resume.present") %>
+              <% else %>
+                <%= [experience.ending_month, experience.ending_year].compact.join("/") %>
+              <% end %>
+            </p>
+            <% if experience.description.present? %>
+              <p class="text-gray-700 mt-2"><%= simple_format(experience.description) %></p>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <%# Skills %>
+  <% if @resume.skills.any? %>
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+      <h2 class="text-xl font-bold text-job-blue-dark mb-4"><%= t("resume.sections.skills") %></h2>
+      <div class="flex flex-wrap gap-2">
+        <% @resume.skills.each do |skill| %>
+          <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm"><%= skill.description %></span>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <%# Languages %>
+  <% if @resume.language_skills.any? %>
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+      <h2 class="text-xl font-bold text-job-blue-dark mb-4"><%= t("resume.sections.languages") %></h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <% @resume.language_skills.each do |ls| %>
+          <div class="flex justify-between items-center border-b border-gray-100 pb-2">
+            <span class="font-medium"><%= ls.language.name %></span>
+            <span class="text-sm text-gray-600">
+              <%= t("resume.speaking") %>: <%= t("resume.levels.#{ls.speaking_level}") %>,
+              <%= t("resume.writing") %>: <%= t("resume.levels.#{ls.writing_level}") %>
+            </span>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+
+  <%# Referrals %>
+  <% if @resume.referrals.any? %>
+    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+      <h2 class="text-xl font-bold text-job-blue-dark mb-4"><%= t("resume.sections.referrals") %></h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <% @resume.referrals.each do |referral| %>
+          <div>
+            <h3 class="font-bold text-gray-800"><%= referral.firstname %> <%= referral.lastname %></h3>
+            <p class="text-gray-600 text-sm"><%= referral.relationship %></p>
+            <% if referral.email.present? %>
+              <p class="text-sm"><%= referral.email %></p>
+            <% end %>
+            <% if referral.phone.present? %>
+              <p class="text-sm"><%= referral.phone %></p>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>

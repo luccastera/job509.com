@@ -1,0 +1,37 @@
+<div class="flex justify-between items-center mb-8">
+  <h1 class="text-2xl font-bold text-gray-900 dark:text-white"><%= t("admin.featured_recruiters") %></h1>
+  <%= link_to "Add Recruiter", new_lakay_featured_recruiter_path, class: "bg-job-blue hover:bg-job-blue-dark text-white px-4 py-2 transition-colors" %>
+</div>
+
+<div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800">
+  <table class="w-full">
+    <thead class="bg-gray-50 dark:bg-gray-800">
+      <tr>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Name</th>
+        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Website</th>
+        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">Actions</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-gray-200 dark:divide-gray-800">
+      <% @featured_recruiters.each do |recruiter| %>
+        <tr>
+          <td class="px-6 py-4 text-sm text-gray-900 dark:text-white"><%= recruiter.name %></td>
+          <td class="px-6 py-4 text-sm text-gray-500 dark:text-gray-400">
+            <% if recruiter.website_url.present? %>
+              <%= link_to recruiter.website_url, recruiter.website_url, target: "_blank", class: "text-job-blue hover:underline" %>
+            <% end %>
+          </td>
+          <td class="px-6 py-4 text-sm text-right space-x-4">
+            <%= link_to "Edit", edit_lakay_featured_recruiter_path(recruiter), class: "text-job-blue hover:underline" %>
+            <%= button_to "Delete", lakay_featured_recruiter_path(recruiter), method: :delete, class: "text-red-600 hover:underline", data: { turbo_confirm: "Are you sure?" } %>
+          </td>
+        </tr>
+      <% end %>
+      <% if @featured_recruiters.empty? %>
+        <tr>
+          <td colspan="3" class="px-6 py-8 text-center text-gray-500 dark:text-gray-400">No featured recruiters yet.</td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

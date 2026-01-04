@@ -1,0 +1,266 @@
+<div class="max-w-4xl mx-auto">
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold text-job-blue-dark"><%= t("resume.edit_title") %></h1>
+    <div class="space-x-4">
+      <%= link_to t("resume.preview"), preview_resume_path, class: "text-job-blue hover:underline", target: "_blank" %>
+      <%= link_to t("resume.download_pdf"), pdf_resume_path(format: :pdf), class: "bg-job-blue hover:bg-job-blue-light text-white px-4 py-2 rounded-lg transition" %>
+    </div>
+  </div>
+
+  <%# Basic Information %>
+  <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+    <h2 class="text-xl font-bold text-job-blue-dark mb-4"><%= t("resume.sections.basic_info") %></h2>
+
+    <%= form_with model: @resume, url: resume_path, method: :patch, class: "space-y-4" do |f| %>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <%= f.label :sex, t("resume.fields.sex"), class: "block text-sm font-medium text-gray-700" %>
+          <%= f.select :sex, options_for_select([[t("resume.sex.male"), "M"], [t("resume.sex.female"), "F"]], @resume.sex), { include_blank: t("helpers.select.prompt") }, class: "mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-job-blue focus:border-job-blue" %>
+        </div>
+
+        <div>
+          <%= f.label :birth_year, t("resume.fields.birth_year"), class: "block text-sm font-medium text-gray-700" %>
+          <%= f.select :birth_year, options_for_select((1950..Date.current.year - 16).to_a.reverse, @resume.birth_year), { include_blank: t("helpers.select.prompt") }, class: "mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-job-blue focus:border-job-blue" %>
+        </div>
+
+        <div>
+          <%= f.label :nationality_id, t("resume.fields.nationality"), class: "block text-sm font-medium text-gray-700" %>
+          <%= f.collection_select :nationality_id, @countries, :id, :name, { include_blank: t("helpers.select.prompt") }, class: "mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-job-blue focus:border-job-blue" %>
+        </div>
+
+        <div>
+          <%= f.label :sector_id, t("resume.fields.sector"), class: "block text-sm font-medium text-gray-700" %>
+          <%= f.collection_select :sector_id, @sectors, :id, :name, { include_blank: t("helpers.select.prompt") }, class: "mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-job-blue focus:border-job-blue" %>
+        </div>
+
+        <div>
+          <%= f.label :years_of_experience, t("resume.fields.years_of_experience"), class: "block text-sm font-medium text-gray-700" %>
+          <%= f.select :years_of_experience, options_for_select((0..40).to_a, @resume.years_of_experience), { include_blank: t("helpers.select.prompt") }, class: "mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-job-blue focus:border-job-blue" %>
+        </div>
+
+        <div class="flex items-center space-x-2">
+          <%= f.check_box :has_drivers_license, class: "rounded border-gray-300 text-job-blue focus:ring-job-blue" %>
+          <%= f.label :has_drivers_license, t("resume.fields.has_drivers_license"), class: "text-sm text-gray-700 cursor-pointer" %>
+        </div>
+      </div>
+
+      <div>
+        <%= f.label :objective, t("resume.fields.objective"), class: "block text-sm font-medium text-gray-700" %>
+        <%= f.text_area :objective, rows: 4, class: "mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-job-blue focus:border-job-blue" %>
+      </div>
+
+      <h3 class="text-lg font-medium text-gray-800 mt-6"><%= t("resume.sections.location") %></h3>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <%= f.label :country_id, t("resume.fields.country"), class: "block text-sm font-medium text-gray-700" %>
+          <%= f.collection_select :country_id, @countries, :id, :name, { include_blank: t("helpers.select.prompt") }, class: "mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-job-blue focus:border-job-blue" %>
+        </div>
+
+        <div>
+          <%= f.label :city_id, t("resume.fields.city"), class: "block text-sm font-medium text-gray-700" %>
+          <%= f.collection_select :city_id, @cities, :id, :name, { include_blank: t("helpers.select.prompt") }, class: "mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-job-blue focus:border-job-blue" %>
+        </div>
+
+        <div class="md:col-span-2">
+          <%= f.label :address1, t("resume.fields.address1"), class: "block text-sm font-medium text-gray-700" %>
+          <%= f.text_field :address1, class: "mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-job-blue focus:border-job-blue" %>
+        </div>
+
+        <div>
+          <%= f.label :address2, t("resume.fields.address2"), class: "block text-sm font-medium text-gray-700" %>
+          <%= f.text_field :address2, class: "mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-job-blue focus:border-job-blue" %>
+        </div>
+
+        <div>
+          <%= f.label :postal_code, t("resume.fields.postal_code"), class: "block text-sm font-medium text-gray-700" %>
+          <%= f.text_field :postal_code, class: "mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-job-blue focus:border-job-blue" %>
+        </div>
+      </div>
+
+      <div class="flex justify-end pt-4">
+        <%= f.submit t("helpers.submit.save"), class: "bg-job-blue hover:bg-job-blue-light text-white px-6 py-2 rounded-lg font-medium transition cursor-pointer" %>
+      </div>
+    <% end %>
+  </div>
+
+  <%# Education Section %>
+  <div class="bg-white rounded-lg shadow-md p-6 mb-6" id="educations">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-bold text-job-blue-dark"><%= t("resume.sections.education") %></h2>
+      <button type="button"
+              class="text-job-blue hover:text-job-blue-light"
+              data-controller="modal"
+              data-action="click->modal#open"
+              data-modal-target="education-modal">
+        + <%= t("resume.add_education") %>
+      </button>
+    </div>
+
+    <div id="educations-list">
+      <% @resume.educations.each do |education| %>
+        <%= render "educations/education", education: education %>
+      <% end %>
+      <% if @resume.educations.empty? %>
+        <p class="text-gray-500 italic"><%= t("resume.no_education") %></p>
+      <% end %>
+    </div>
+  </div>
+
+  <%# Work Experience Section %>
+  <div class="bg-white rounded-lg shadow-md p-6 mb-6" id="work-experiences">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-bold text-job-blue-dark"><%= t("resume.sections.work_experience") %></h2>
+      <button type="button"
+              class="text-job-blue hover:text-job-blue-light"
+              data-controller="modal"
+              data-action="click->modal#open"
+              data-modal-target="work-experience-modal">
+        + <%= t("resume.add_work_experience") %>
+      </button>
+    </div>
+
+    <div id="work-experiences-list">
+      <% @resume.work_experiences.each do |work_experience| %>
+        <%= render "work_experiences/work_experience", work_experience: work_experience %>
+      <% end %>
+      <% if @resume.work_experiences.empty? %>
+        <p class="text-gray-500 italic"><%= t("resume.no_work_experience") %></p>
+      <% end %>
+    </div>
+  </div>
+
+  <%# Skills Section %>
+  <div class="bg-white rounded-lg shadow-md p-6 mb-6" id="skills">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-bold text-job-blue-dark"><%= t("resume.sections.skills") %></h2>
+      <button type="button"
+              class="text-job-blue hover:text-job-blue-light"
+              data-controller="modal"
+              data-action="click->modal#open"
+              data-modal-target="skill-modal">
+        + <%= t("resume.add_skill") %>
+      </button>
+    </div>
+
+    <div id="skills-list" class="flex flex-wrap gap-2">
+      <% @resume.skills.each do |skill| %>
+        <%= render "skills/skill", skill: skill %>
+      <% end %>
+      <% if @resume.skills.empty? %>
+        <p class="text-gray-500 italic"><%= t("resume.no_skills") %></p>
+      <% end %>
+    </div>
+  </div>
+
+  <%# Language Skills Section %>
+  <div class="bg-white rounded-lg shadow-md p-6 mb-6" id="language-skills">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-bold text-job-blue-dark"><%= t("resume.sections.languages") %></h2>
+      <button type="button"
+              class="text-job-blue hover:text-job-blue-light"
+              data-controller="modal"
+              data-action="click->modal#open"
+              data-modal-target="language-skill-modal">
+        + <%= t("resume.add_language") %>
+      </button>
+    </div>
+
+    <div id="language-skills-list">
+      <% @resume.language_skills.each do |language_skill| %>
+        <%= render "language_skills/language_skill", language_skill: language_skill %>
+      <% end %>
+      <% if @resume.language_skills.empty? %>
+        <p class="text-gray-500 italic"><%= t("resume.no_languages") %></p>
+      <% end %>
+    </div>
+  </div>
+
+  <%# Referrals Section %>
+  <div class="bg-white rounded-lg shadow-md p-6 mb-6" id="referrals">
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-xl font-bold text-job-blue-dark"><%= t("resume.sections.referrals") %></h2>
+      <button type="button"
+              class="text-job-blue hover:text-job-blue-light"
+              data-controller="modal"
+              data-action="click->modal#open"
+              data-modal-target="referral-modal">
+        + <%= t("resume.add_referral") %>
+      </button>
+    </div>
+
+    <div id="referrals-list">
+      <% @resume.referrals.each do |referral| %>
+        <%= render "referrals/referral", referral: referral %>
+      <% end %>
+      <% if @resume.referrals.empty? %>
+        <p class="text-gray-500 italic"><%= t("resume.no_referrals") %></p>
+      <% end %>
+    </div>
+  </div>
+</div>
+
+<%# Education Modal %>
+<div id="education-modal" data-modal class="hidden fixed inset-0 z-50 items-center justify-center bg-black/50" data-controller="modal" data-action="click->modal#closeOnClickOutside keydown@window->modal#closeOnEscape">
+  <div class="bg-white dark:bg-gray-900 w-full max-w-lg mx-4 p-6 border border-gray-200 dark:border-gray-700" data-action="click->modal#stopPropagation">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-xl font-semibold text-gray-900 dark:text-white"><%= t("resume.add_education") %></h3>
+      <button type="button" data-action="click->modal#close" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+    </div>
+    <%= render "educations/form", resume: @resume, education: @resume.educations.build %>
+  </div>
+</div>
+
+<%# Work Experience Modal %>
+<div id="work-experience-modal" data-modal class="hidden fixed inset-0 z-50 items-center justify-center bg-black/50" data-controller="modal" data-action="click->modal#closeOnClickOutside keydown@window->modal#closeOnEscape">
+  <div class="bg-white dark:bg-gray-900 w-full max-w-lg mx-4 p-6 border border-gray-200 dark:border-gray-700" data-action="click->modal#stopPropagation">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-xl font-semibold text-gray-900 dark:text-white"><%= t("resume.add_work_experience") %></h3>
+      <button type="button" data-action="click->modal#close" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+    </div>
+    <%= render "work_experiences/form", resume: @resume, work_experience: @resume.work_experiences.build %>
+  </div>
+</div>
+
+<%# Skill Modal %>
+<div id="skill-modal" data-modal class="hidden fixed inset-0 z-50 items-center justify-center bg-black/50" data-controller="modal" data-action="click->modal#closeOnClickOutside keydown@window->modal#closeOnEscape">
+  <div class="bg-white dark:bg-gray-900 w-full max-w-lg mx-4 p-6 border border-gray-200 dark:border-gray-700" data-action="click->modal#stopPropagation">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-xl font-semibold text-gray-900 dark:text-white"><%= t("resume.add_skill") %></h3>
+      <button type="button" data-action="click->modal#close" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+    </div>
+    <%= render "skills/form", resume: @resume, skill: @resume.skills.build %>
+  </div>
+</div>
+
+<%# Language Skill Modal %>
+<div id="language-skill-modal" data-modal class="hidden fixed inset-0 z-50 items-center justify-center bg-black/50" data-controller="modal" data-action="click->modal#closeOnClickOutside keydown@window->modal#closeOnEscape">
+  <div class="bg-white dark:bg-gray-900 w-full max-w-lg mx-4 p-6 border border-gray-200 dark:border-gray-700" data-action="click->modal#stopPropagation">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-xl font-semibold text-gray-900 dark:text-white"><%= t("resume.add_language") %></h3>
+      <button type="button" data-action="click->modal#close" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+    </div>
+    <%= render "language_skills/form", resume: @resume, language_skill: @resume.language_skills.build %>
+  </div>
+</div>
+
+<%# Referral Modal %>
+<div id="referral-modal" data-modal class="hidden fixed inset-0 z-50 items-center justify-center bg-black/50" data-controller="modal" data-action="click->modal#closeOnClickOutside keydown@window->modal#closeOnEscape">
+  <div class="bg-white dark:bg-gray-900 w-full max-w-lg mx-4 p-6 border border-gray-200 dark:border-gray-700" data-action="click->modal#stopPropagation">
+    <div class="flex justify-between items-center mb-4">
+      <h3 class="text-xl font-semibold text-gray-900 dark:text-white"><%= t("resume.add_referral") %></h3>
+      <button type="button" data-action="click->modal#close" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+      </button>
+    </div>
+    <%= render "referrals/form", resume: @resume, referral: @resume.referrals.build %>
+  </div>
+</div>

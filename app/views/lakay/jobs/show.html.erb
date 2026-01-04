@@ -1,0 +1,107 @@
+<div class="flex justify-between items-center mb-6">
+  <h1 class="text-2xl font-bold text-gray-800"><%= @job.title %></h1>
+  <div class="flex space-x-4">
+    <% unless @job.approved? %>
+      <%= button_to t("admin.approve"), approve_lakay_job_path(@job), method: :patch, class: "bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg" %>
+    <% end %>
+    <%= link_to t("actions.edit"), edit_lakay_job_path(@job), class: "bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg" %>
+    <%= link_to t("actions.back"), lakay_jobs_path, class: "text-gray-600 hover:underline" %>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <%# Main Content %>
+  <div class="lg:col-span-2 space-y-6">
+    <div class="bg-white rounded-lg shadow p-6">
+      <h2 class="text-lg font-bold text-gray-800 mb-4"><%= t("jobs.description") %></h2>
+      <div class="prose max-w-none">
+        <%= simple_format(@job.description) %>
+      </div>
+    </div>
+
+    <% if @job.qualifications.present? %>
+      <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-lg font-bold text-gray-800 mb-4"><%= t("jobs.qualifications") %></h2>
+        <div class="prose max-w-none">
+          <%= simple_format(@job.qualifications) %>
+        </div>
+      </div>
+    <% end %>
+
+    <% if @job.company_description.present? %>
+      <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-lg font-bold text-gray-800 mb-4">About <%= @job.company %></h2>
+        <div class="prose max-w-none">
+          <%= simple_format(@job.company_description) %>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <%# Sidebar %>
+  <div class="space-y-6">
+    <div class="bg-white rounded-lg shadow p-6">
+      <h2 class="text-lg font-bold text-gray-800 mb-4">Job Details</h2>
+      <dl class="space-y-3">
+        <div>
+          <dt class="text-sm text-gray-500"><%= t("jobs.company") %></dt>
+          <dd class="font-medium"><%= @job.company %></dd>
+        </div>
+        <% if @job.sector %>
+          <div>
+            <dt class="text-sm text-gray-500"><%= t("jobs.sector") %></dt>
+            <dd class="font-medium"><%= @job.sector.name %></dd>
+          </div>
+        <% end %>
+        <% if @job.jobtype %>
+          <div>
+            <dt class="text-sm text-gray-500"><%= t("jobs.job_type") %></dt>
+            <dd class="font-medium"><%= @job.jobtype.name %></dd>
+          </div>
+        <% end %>
+        <% if @job.city || @job.country %>
+          <div>
+            <dt class="text-sm text-gray-500"><%= t("jobs.location") %></dt>
+            <dd class="font-medium"><%= [@job.city&.name, @job.country&.name].compact.join(", ") %></dd>
+          </div>
+        <% end %>
+        <div>
+          <dt class="text-sm text-gray-500"><%= t("jobs.posted") %></dt>
+          <dd class="font-medium"><%= @job.post_date&.strftime("%B %d, %Y") %></dd>
+        </div>
+        <div>
+          <dt class="text-sm text-gray-500">Status</dt>
+          <dd>
+            <% if @job.expired? %>
+              <span class="px-2 py-1 rounded text-xs bg-gray-100 text-gray-800">Expired</span>
+            <% elsif @job.approved? %>
+              <span class="px-2 py-1 rounded text-xs bg-green-100 text-green-800">Approved</span>
+            <% else %>
+              <span class="px-2 py-1 rounded text-xs bg-yellow-100 text-yellow-800">Pending</span>
+            <% end %>
+          </dd>
+        </div>
+      </dl>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+      <h2 class="text-lg font-bold text-gray-800 mb-4">Posted By</h2>
+      <% if @job.user %>
+        <p class="font-medium"><%= @job.user.full_name %></p>
+        <p class="text-sm text-gray-500"><%= @job.user.email %></p>
+        <p class="text-sm text-gray-500"><%= @job.user.phone %></p>
+        <%= link_to "View Employer", lakay_employer_path(@job.user), class: "text-job-blue hover:underline text-sm" %>
+      <% else %>
+        <p class="text-gray-500">N/A</p>
+      <% end %>
+    </div>
+
+    <div class="bg-white rounded-lg shadow p-6">
+      <h2 class="text-lg font-bold text-gray-800 mb-4">Applications</h2>
+      <p class="text-3xl font-bold text-job-blue"><%= @job.applics.count %></p>
+      <% if @job.applics.any? %>
+        <%= link_to "View Applicants", lakay_job_applicants_path(@job), class: "text-job-blue hover:underline text-sm" %>
+      <% end %>
+    </div>
+  </div>
+</div>

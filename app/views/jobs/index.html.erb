@@ -1,0 +1,62 @@
+<%# Search and Filters %>
+<div class="mb-12">
+  <%= form_with url: search_jobs_path, method: :get, class: "flex flex-col md:flex-row gap-4" do |f| %>
+    <div class="flex-1">
+      <%= f.text_field :q, value: params[:q], placeholder: t("jobs.search_placeholder"), class: "w-full px-4 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:border-gray-900 dark:focus:border-white transition-colors" %>
+    </div>
+    <div class="w-full md:w-48">
+      <%= f.select :sector_id, options_from_collection_for_select(@sectors, :id, :name, params[:sector_id]), { include_blank: t("jobs.all_sectors") }, class: "w-full px-4 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:border-gray-900 dark:focus:border-white transition-colors" %>
+    </div>
+    <div class="w-full md:w-48">
+      <%= f.select :city_id, options_from_collection_for_select(@cities, :id, :name, params[:city_id]), { include_blank: t("jobs.all_cities") }, class: "w-full px-4 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:border-gray-900 dark:focus:border-white transition-colors" %>
+    </div>
+    <%= f.submit t("actions.search"), class: "px-6 py-3 bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-medium hover:bg-gray-700 dark:hover:bg-gray-200 transition-colors cursor-pointer" %>
+  <% end %>
+</div>
+
+<%# Jobs List %>
+<div class="border-t border-gray-200 dark:border-gray-800">
+  <% if @jobs.any? %>
+    <% @jobs.each do |job| %>
+      <article class="py-8 border-b border-gray-200 dark:border-gray-800">
+        <div class="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
+          <div class="flex-1">
+            <h2 class="text-xl font-semibold mb-2">
+              <%= link_to job.title, job, class: "text-gray-900 dark:text-white hover:text-job-blue dark:hover:text-job-blue-light transition-colors" %>
+            </h2>
+            <div class="flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-gray-500 dark:text-gray-400 mb-3">
+              <span class="font-medium text-gray-700 dark:text-gray-300"><%= job.company %></span>
+              <% if job.city || job.country %>
+                <span><%= [job.city&.name, job.country&.name].compact.join(", ") %></span>
+              <% end %>
+              <% if job.jobtype %>
+                <span><%= job.jobtype.name %></span>
+              <% end %>
+              <% if job.sector %>
+                <span><%= job.sector.name %></span>
+              <% end %>
+            </div>
+            <% if job.description.present? %>
+              <p class="text-gray-600 dark:text-gray-400 text-sm leading-relaxed"><%= truncate(strip_tags(job.description), length: 200) %></p>
+            <% end %>
+          </div>
+          <div class="flex flex-col items-start md:items-end gap-2 shrink-0">
+            <%= link_to t("jobs.apply_now"), apply_job_path(job), class: "px-4 py-2 bg-job-blue hover:bg-job-blue-dark text-white text-sm font-medium transition-colors" %>
+            <span class="text-xs text-gray-400 dark:text-gray-500"><%= time_ago_in_words(job.post_date || job.created_at) %> ago</span>
+          </div>
+        </div>
+      </article>
+    <% end %>
+
+    <%# Pagination %>
+    <% if @pagy.pages > 1 %>
+      <div class="mt-12 flex justify-center">
+        <%== pagy_nav(@pagy) %>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="py-16 text-center">
+      <p class="text-gray-500 dark:text-gray-400"><%= t("jobs.no_jobs_found") %></p>
+    </div>
+  <% end %>
+</div>

@@ -1,0 +1,62 @@
+<div class="max-w-xl mx-auto">
+  <div class="mb-6">
+    <%= link_to "&larr; #{t('actions.back')} to event".html_safe, @event, class: "text-gray-600 hover:text-job-blue" %>
+  </div>
+
+  <div class="bg-white rounded-lg shadow-md p-8">
+    <h1 class="text-2xl font-bold text-job-blue-dark mb-2"><%= t("events.register") %></h1>
+    <h2 class="text-lg text-gray-600 mb-6"><%= @event.name %></h2>
+
+    <div class="bg-gray-50 rounded-lg p-4 mb-6">
+      <div class="flex justify-between items-center">
+        <div>
+          <p class="text-sm text-gray-500"><%= t("events.date") %></p>
+          <p class="font-medium"><%= @event.starts_at.strftime("%B %d, %Y at %I:%M %p") %></p>
+        </div>
+        <div class="text-right">
+          <p class="text-sm text-gray-500"><%= t("events.cost") %></p>
+          <p class="font-bold text-lg">
+            <% if @event.cost.to_f > 0 %>
+              <%= number_to_currency(@event.cost, unit: "HTG ") %>
+            <% else %>
+              <span class="text-green-600"><%= t("events.free") %></span>
+            <% end %>
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <%= form_with model: @attendee, url: register_event_path(@event), class: "space-y-4" do |f| %>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <%= f.label :firstname, t("users.first_name"), class: "block text-sm font-medium text-gray-700" %>
+          <%= f.text_field :firstname, required: true, class: "mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-job-blue focus:border-job-blue" %>
+        </div>
+
+        <div>
+          <%= f.label :lastname, t("users.last_name"), class: "block text-sm font-medium text-gray-700" %>
+          <%= f.text_field :lastname, required: true, class: "mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-job-blue focus:border-job-blue" %>
+        </div>
+      </div>
+
+      <div>
+        <%= f.label :email, t("users.email"), class: "block text-sm font-medium text-gray-700" %>
+        <%= f.email_field :email, required: true, class: "mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-job-blue focus:border-job-blue" %>
+      </div>
+
+      <div>
+        <%= f.label :phone, t("users.phone"), class: "block text-sm font-medium text-gray-700" %>
+        <%= f.telephone_field :phone, required: true, class: "mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-job-blue focus:border-job-blue" %>
+      </div>
+
+      <div>
+        <%= f.label :company, "Company (optional)", class: "block text-sm font-medium text-gray-700" %>
+        <%= f.text_field :company, class: "mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-job-blue focus:border-job-blue" %>
+      </div>
+
+      <div class="pt-4">
+        <%= f.submit t("events.register"), class: "w-full bg-job-blue hover:bg-job-blue-light text-white py-3 rounded-lg font-medium text-lg transition cursor-pointer" %>
+      </div>
+    <% end %>
+  </div>
+</div>

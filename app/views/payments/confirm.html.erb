@@ -1,0 +1,61 @@
+<div class="max-w-xl mx-auto">
+  <h1 class="text-2xl font-bold text-job-blue-dark dark:text-job-blue-light mb-6">Complete Your Job Posting</h1>
+
+  <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 p-6 mb-6">
+    <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Job Details</h2>
+
+    <dl class="space-y-3">
+      <div>
+        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Title</dt>
+        <dd class="text-gray-900 dark:text-white"><%= @job.title %></dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Company</dt>
+        <dd class="text-gray-900 dark:text-white"><%= @job.company %></dd>
+      </div>
+      <div>
+        <dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Location</dt>
+        <dd class="text-gray-900 dark:text-white"><%= @job.location %></dd>
+      </div>
+    </dl>
+  </div>
+
+  <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 p-6 mb-6">
+    <h2 class="text-lg font-bold text-gray-900 dark:text-white mb-4">Payment Details</h2>
+
+    <div class="flex justify-between items-center py-3 border-b border-gray-200 dark:border-gray-700">
+      <span class="text-gray-600 dark:text-gray-400">Job Posting (30 days)</span>
+      <span class="font-bold text-gray-900 dark:text-white">$<%= @price %> <%= @currency %></span>
+    </div>
+
+    <div class="flex justify-between items-center py-3 text-lg">
+      <span class="font-bold text-gray-900 dark:text-white">Total</span>
+      <span class="font-bold text-job-blue">$<%= @price %> <%= @currency %></span>
+    </div>
+  </div>
+
+  <%= form_with url: payment_process_path, method: :post, class: "bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 p-6" do |f| %>
+    <%= hidden_field_tag :job_id, @job.id %>
+
+    <div class="mb-6">
+      <label for="coupon_code" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+        Have a coupon code?
+      </label>
+      <div class="flex space-x-2">
+        <input type="text" name="coupon_code" id="coupon_code" placeholder="Enter coupon code"
+               class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:border-job-blue uppercase">
+      </div>
+      <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Leave blank if you don't have a coupon</p>
+    </div>
+
+    <div class="space-y-3">
+      <%= f.submit "Pay with PayPal", class: "w-full bg-[#0070BA] hover:bg-[#005ea6] text-white py-3 font-bold transition-colors cursor-pointer" %>
+
+      <%= link_to "Cancel", @job, class: "block w-full text-center py-3 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors" %>
+    </div>
+  <% end %>
+
+  <p class="text-center text-sm text-gray-500 dark:text-gray-400 mt-4">
+    Your job will be published immediately after payment is confirmed.
+  </p>
+</div>

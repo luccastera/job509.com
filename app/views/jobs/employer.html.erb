@@ -1,0 +1,59 @@
+<div class="max-w-4xl mx-auto">
+  <div class="flex justify-between items-center mb-8">
+    <h1 class="text-3xl font-bold text-job-blue-dark"><%= t("jobs.my_posted_jobs") %></h1>
+    <%= link_to t("jobs.post_new"), new_job_path, class: "bg-job-blue hover:bg-job-blue-light text-white px-6 py-2 rounded-lg font-medium transition" %>
+  </div>
+
+  <% if @jobs.any? %>
+    <div class="space-y-4">
+      <% @jobs.each do |job| %>
+        <div class="bg-white rounded-lg shadow-md p-6">
+          <div class="flex justify-between items-start">
+            <div>
+              <h2 class="text-xl font-bold text-job-blue-dark">
+                <%= link_to job.title, job, class: "hover:text-job-blue" %>
+              </h2>
+              <p class="text-gray-600"><%= job.company %> - <%= job.location %></p>
+
+              <div class="flex gap-2 mt-2">
+                <% if job.approved? %>
+                  <span class="inline-flex items-center px-2 py-1 rounded text-xs bg-green-100 text-green-800">
+                    <%= t("jobs.approved") %>
+                  </span>
+                <% else %>
+                  <span class="inline-flex items-center px-2 py-1 rounded text-xs bg-yellow-100 text-yellow-800">
+                    <%= t("jobs.pending_approval") %>
+                  </span>
+                <% end %>
+
+                <% if job.expired? %>
+                  <span class="inline-flex items-center px-2 py-1 rounded text-xs bg-red-100 text-red-800">
+                    <%= t("jobs.expired") %>
+                  </span>
+                <% end %>
+
+                <span class="inline-flex items-center px-2 py-1 rounded text-xs bg-blue-100 text-blue-800">
+                  <%= job.applics.count %> <%= t("jobs.applications_received").downcase %>
+                </span>
+              </div>
+            </div>
+
+            <div class="flex gap-2">
+              <%= link_to t("actions.edit"), edit_job_path(job), class: "text-job-blue hover:text-job-blue-dark" %>
+              <%= link_to t("actions.view"), job, class: "text-gray-600 hover:text-gray-800" %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="mt-8">
+      <%== pagy_nav(@pagy) if @pagy.pages > 1 %>
+    </div>
+  <% else %>
+    <div class="bg-white rounded-lg shadow-md p-8 text-center">
+      <p class="text-gray-500 text-lg">You haven't posted any jobs yet.</p>
+      <%= link_to t("jobs.post_new"), new_job_path, class: "inline-block mt-4 bg-job-blue hover:bg-job-blue-light text-white px-6 py-2 rounded-lg font-medium transition" %>
+    </div>
+  <% end %>
+</div>

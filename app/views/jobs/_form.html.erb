@@ -1,0 +1,86 @@
+<%= form_with model: job, class: "space-y-6" do |f| %>
+  <% if job.errors.any? %>
+    <div class="bg-red-50 border border-red-400 text-red-700 px-4 py-3 rounded">
+      <h3 class="font-bold"><%= pluralize(job.errors.count, "error") %> prohibited this job from being saved:</h3>
+      <ul class="list-disc list-inside mt-2">
+        <% job.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div>
+      <%= f.label :title, class: "block text-sm font-medium text-gray-700" %>
+      <%= f.text_field :title, class: "mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-job-blue focus:border-job-blue" %>
+    </div>
+
+    <div>
+      <%= f.label :company, class: "block text-sm font-medium text-gray-700" %>
+      <%= f.text_field :company, class: "mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-job-blue focus:border-job-blue" %>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div>
+      <%= f.label :company_url, class: "block text-sm font-medium text-gray-700" %>
+      <%= f.url_field :company_url, placeholder: "https://...", class: "mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-job-blue focus:border-job-blue" %>
+    </div>
+
+    <div>
+      <%= f.label :apply_url, class: "block text-sm font-medium text-gray-700" %>
+      <%= f.url_field :apply_url, placeholder: "https://...", class: "mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-job-blue focus:border-job-blue" %>
+      <p class="mt-1 text-sm text-gray-500">Leave blank to receive applications through JOB509</p>
+    </div>
+  </div>
+
+  <div>
+    <%= f.label :company_description, class: "block text-sm font-medium text-gray-700" %>
+    <%= f.text_area :company_description, rows: 3, class: "mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-job-blue focus:border-job-blue" %>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div>
+      <%= f.label :jobtype_id, t("jobs.job_type"), class: "block text-sm font-medium text-gray-700" %>
+      <%= f.collection_select :jobtype_id, @jobtypes, :id, :name, { prompt: "Select type..." }, class: "mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-job-blue focus:border-job-blue" %>
+    </div>
+
+    <div>
+      <%= f.label :sector_id, t("jobs.sector"), class: "block text-sm font-medium text-gray-700" %>
+      <%= f.collection_select :sector_id, @sectors, :id, :name, { prompt: "Select sector..." }, class: "mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-job-blue focus:border-job-blue" %>
+    </div>
+
+    <div>
+      <%= f.label :post_date, class: "block text-sm font-medium text-gray-700" %>
+      <%= f.date_field :post_date, class: "mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-job-blue focus:border-job-blue" %>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+    <div>
+      <%= f.label :country_id, class: "block text-sm font-medium text-gray-700" %>
+      <%= f.collection_select :country_id, @countries, :id, :name, { prompt: "Select country..." }, class: "mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-job-blue focus:border-job-blue" %>
+    </div>
+
+    <div>
+      <%= f.label :city_id, class: "block text-sm font-medium text-gray-700" %>
+      <%= f.collection_select :city_id, @cities, :id, :name, { include_blank: "Select city..." }, class: "mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-job-blue focus:border-job-blue" %>
+    </div>
+  </div>
+
+  <div>
+    <%= f.label :description, t("jobs.description"), class: "block text-sm font-medium text-gray-700" %>
+    <%= f.text_area :description, rows: 8, class: "mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-job-blue focus:border-job-blue" %>
+  </div>
+
+  <div>
+    <%= f.label :qualifications, t("jobs.qualifications"), class: "block text-sm font-medium text-gray-700" %>
+    <%= f.text_area :qualifications, rows: 6, class: "mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-job-blue focus:border-job-blue" %>
+  </div>
+
+  <div class="flex justify-end space-x-4">
+    <%= link_to t("actions.cancel"), jobs_path, class: "px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition" %>
+    <%= f.submit class: "px-6 py-2 bg-job-blue hover:bg-job-blue-light text-white rounded-lg font-medium transition cursor-pointer" %>
+  </div>
+<% end %>

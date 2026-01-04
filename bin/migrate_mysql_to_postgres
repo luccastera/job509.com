@@ -1,0 +1,207 @@
+#!/usr/bin/env bash
+#
+# MySQL to PostgreSQL Migration Script for Job509
+#
+# This script exports data from MySQL and imports into PostgreSQL
+# using mysqldump and custom SQL transformations.
+#
+# Prerequisites:
+#   - MySQL client (mysql, mysqldump)
+#   - PostgreSQL client (psql)
+#   - Rails database already migrated (bin/rails db:migrate)
+#
+# Usage:
+#   bin/migrate_mysql_to_postgres
+#
+# Environment variables (set these or edit defaults below):
+#   MYSQL_HOST, MYSQL_PORT, MYSQL_DATABASE, MYSQL_USER, MYSQL_PASSWORD
+#   POSTGRES_HOST, POSTGRES_PORT, POSTGRES_DATABASE, POSTGRES_USER
+
+set -e
+
+# Colors for output
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m' # No Color
+
+# MySQL connection
+MYSQL_HOST="${MYSQL_HOST:-localhost}"
+MYSQL_PORT="${MYSQL_PORT:-3306}"
+MYSQL_DATABASE="${MYSQL_DATABASE:-jobyola_production}"
+MYSQL_USER="${MYSQL_USER:-root}"
+MYSQL_PASSWORD="${MYSQL_PASSWORD:-}"
+
+# PostgreSQL connection (from database.yml or environment)
+POSTGRES_HOST="${POSTGRES_HOST:-localhost}"
+POSTGRES_PORT="${POSTGRES_PORT:-5432}"
+POSTGRES_DATABASE="${POSTGRES_DATABASE:-job509_development}"
+POSTGRES_USER="${POSTGRES_USER:-$(whoami)}"
+
+# Temp directory for dumps
+DUMP_DIR="tmp/mysql_migration"
+mkdir -p "$DUMP_DIR"
+
+echo -e "${GREEN}=== Job509 MySQL to PostgreSQL Migration ===${NC}"
+echo ""
+echo "MySQL:      $MYSQL_USER@$MYSQL_HOST:$MYSQL_PORT/$MYSQL_DATABASE"
+echo "PostgreSQL: $POSTGRES_USER@$POSTGRES_HOST:$POSTGRES_PORT/$POSTGRES_DATABASE"
+echo ""
+
+# Function to export table from MySQL as CSV
+export_table() {
+  local table=$1
+  echo -e "${YELLOW}Exporting $table...${NC}"
+
+  mysql -h "$MYSQL_HOST" -P "$MYSQL_PORT" -u "$MYSQL_USER" ${MYSQL_PASSWORD:+-p"$MYSQL_PASSWORD"} \
+    "$MYSQL_DATABASE" \
+    -e "SELECT * FROM $table" \
+    --batch --raw \
+    > "$DUMP_DIR/${table}.tsv" 2>/dev/null || echo "  Warning: Table $table may not exist"
+}
+
+# Function to import CSV into PostgreSQL
+import_table() {
+  local table=$1
+  local file="$DUMP_DIR/${table}.tsv"
+
+  if [ ! -f "$file" ] || [ ! -s "$file" ]; then
+    echo "  Skipping $table (no data)"
+    return
+  fi
+
+  echo -e "${YELLOW}Importing $table...${NC}"
+
+  # Get column count from first line
+  local columns=$(head -1 "$file")
+
+  # Skip header and import
+  tail -n +2 "$file" | psql -h "$POSTGRES_HOST" -p "$POSTGRES_PORT" -U "$POSTGRES_USER" \
+    -d "$POSTGRES_DATABASE" \
+    -c "\\COPY $table FROM STDIN WITH (FORMAT text, NULL '\\N')" 2>/dev/null || \
+    echo "  Warning: Error importing $table"
+}
+
+# Tables in dependency order
+LOOKUP_TABLES="countries cities sectors jobtypes languages"
+CORE_TABLES="users jobs resumes"
+COMPONENT_TABLES="educations work_experiences skills language_skills referrals"
+OTHER_TABLES="applics events attendees tags taggings lists coupons featured_recruiters share_tokens"
+
+echo -e "${GREEN}Step 1: Exporting tables from MySQL${NC}"
+
+for table in $LOOKUP_TABLES $CORE_TABLES $COMPONENT_TABLES $OTHER_TABLES; do
+  export_table "$table"
+done
+
+# Also try to export lists_users (HABTM join table)
+export_table "lists_users"
+
+echo ""
+echo -e "${GREEN}Step 2: Preparing PostgreSQL database${NC}"
+
+# Clear existing data and reset sequences
+psql -h "$POSTGRES_HOST" -p "$POSTGRES_PORT" -U "$POSTGRES_USER" -d "$POSTGRES_DATABASE" << 'EOSQL'
+-- Disable triggers for faster import
+SET session_replication_role = 'replica';
+
+-- Truncate tables in reverse dependency order
+TRUNCATE share_tokens, featured_recruiters, lists_users, lists, taggings, tags,
+         coupons, attendees, events, applics, referrals, language_skills,
+         skills, work_experiences, educations, resumes, jobs, users,
+         languages, jobtypes, sectors, cities, countries
+RESTART IDENTITY CASCADE;
+
+SET session_replication_role = 'origin';
+EOSQL
+
+echo ""
+echo -e "${GREEN}Step 3: Importing data into PostgreSQL${NC}"
+
+# Import in dependency order
+psql -h "$POSTGRES_HOST" -p "$POSTGRES_PORT" -U "$POSTGRES_USER" -d "$POSTGRES_DATABASE" \
+  -c "SET session_replication_role = 'replica';"
+
+for table in $LOOKUP_TABLES; do
+  import_table "$table"
+done
+
+for table in $CORE_TABLES; do
+  import_table "$table"
+done
+
+for table in $COMPONENT_TABLES; do
+  import_table "$table"
+done
+
+for table in $OTHER_TABLES; do
+  import_table "$table"
+done
+
+import_table "lists_users"
+
+psql -h "$POSTGRES_HOST" -p "$POSTGRES_PORT" -U "$POSTGRES_USER" -d "$POSTGRES_DATABASE" \
+  -c "SET session_replication_role = 'origin';"
+
+echo ""
+echo -e "${GREEN}Step 4: Resetting sequences${NC}"
+
+psql -h "$POSTGRES_HOST" -p "$POSTGRES_PORT" -U "$POSTGRES_USER" -d "$POSTGRES_DATABASE" << 'EOSQL'
+-- Reset all sequences to max(id) + 1
+DO $$
+DECLARE
+  r RECORD;
+  max_id BIGINT;
+BEGIN
+  FOR r IN (
+    SELECT table_name, column_name
+    FROM information_schema.columns
+    WHERE column_default LIKE 'nextval%'
+    AND table_schema = 'public'
+  ) LOOP
+    EXECUTE format('SELECT COALESCE(MAX(%I), 0) FROM %I', r.column_name, r.table_name) INTO max_id;
+    EXECUTE format('SELECT setval(pg_get_serial_sequence(%L, %L), %s, true)', r.table_name, r.column_name, max_id);
+  END LOOP;
+END $$;
+EOSQL
+
+echo ""
+echo -e "${GREEN}Step 5: Post-migration cleanup${NC}"
+
+psql -h "$POSTGRES_HOST" -p "$POSTGRES_PORT" -U "$POSTGRES_USER" -d "$POSTGRES_DATABASE" << 'EOSQL'
+-- Clear passwords (users will need to reset)
+UPDATE users SET encrypted_password = '';
+UPDATE users SET reset_password_token = NULL, reset_password_sent_at = NULL;
+
+-- Show migration summary
+SELECT 'countries' as table_name, COUNT(*) as count FROM countries
+UNION ALL SELECT 'cities', COUNT(*) FROM cities
+UNION ALL SELECT 'sectors', COUNT(*) FROM sectors
+UNION ALL SELECT 'jobtypes', COUNT(*) FROM jobtypes
+UNION ALL SELECT 'languages', COUNT(*) FROM languages
+UNION ALL SELECT 'users', COUNT(*) FROM users
+UNION ALL SELECT 'jobs', COUNT(*) FROM jobs
+UNION ALL SELECT 'resumes', COUNT(*) FROM resumes
+UNION ALL SELECT 'educations', COUNT(*) FROM educations
+UNION ALL SELECT 'work_experiences', COUNT(*) FROM work_experiences
+UNION ALL SELECT 'skills', COUNT(*) FROM skills
+UNION ALL SELECT 'language_skills', COUNT(*) FROM language_skills
+UNION ALL SELECT 'referrals', COUNT(*) FROM referrals
+UNION ALL SELECT 'applics', COUNT(*) FROM applics
+UNION ALL SELECT 'events', COUNT(*) FROM events
+UNION ALL SELECT 'attendees', COUNT(*) FROM attendees
+UNION ALL SELECT 'tags', COUNT(*) FROM tags
+UNION ALL SELECT 'taggings', COUNT(*) FROM taggings
+UNION ALL SELECT 'lists', COUNT(*) FROM lists
+ORDER BY table_name;
+EOSQL
+
+echo ""
+echo -e "${GREEN}=== Migration Complete! ===${NC}"
+echo ""
+echo "Next steps:"
+echo "  1. Verify data integrity in Rails console"
+echo "  2. Create new administrator accounts"
+echo "  3. Users will need to reset their passwords"
+echo ""
+echo "Cleanup: rm -rf $DUMP_DIR"

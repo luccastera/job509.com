@@ -1,0 +1,25 @@
+<div class="border-l-4 border-job-blue pl-4 py-2 mb-4" id="<%= dom_id(education) %>">
+  <div class="flex justify-between items-start">
+    <div>
+      <h3 class="font-bold text-gray-800"><%= education.diploma %></h3>
+      <p class="text-job-blue"><%= education.school %></p>
+      <p class="text-gray-600 text-sm">
+        <%= education.field_of_study %>
+        <% if education.graduation_year.present? %>
+          - <%= education.graduation_year %>
+        <% end %>
+        <% unless education.is_completed %>
+          <span class="text-yellow-600">(<%= t("resume.in_progress") %>)</span>
+        <% end %>
+      </p>
+    </div>
+    <div class="flex space-x-2">
+      <%= button_to resume_education_path(education),
+                    method: :delete,
+                    class: "text-red-600 hover:text-red-800 text-sm",
+                    data: { turbo_confirm: t("helpers.confirm") } do %>
+        <%= t("helpers.submit.delete") %>
+      <% end %>
+    </div>
+  </div>
+</div>

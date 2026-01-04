@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>" class="">
+  <head>
+    <title><%= content_for(:title) || t("site.name") %> - <%= t("site.tagline") %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="<%= t('site.name') %>">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="description" content="<%= t('site.description') %>">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= yield :head %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zalando+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+      if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark')
+      }
+    </script>
+
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="min-h-screen flex flex-col bg-white text-gray-900 dark:bg-gray-950 dark:text-gray-100 transition-colors duration-200">
+    <%# Header %>
+    <header class="bg-white text-gray-900 dark:bg-black dark:text-white border-b border-gray-200 dark:border-gray-800" data-controller="dark-mode">
+      <nav class="max-w-6xl mx-auto px-6 py-5">
+        <div class="flex items-center justify-between">
+          <%# Logo %>
+          <div class="flex items-center space-x-12">
+            <%= link_to root_path, class: "text-xl font-semibold tracking-tight hover:text-gray-600 dark:hover:text-gray-300 transition-colors" do %>
+              J<span class="inline-block w-[0.80em] h-[0.80em] mr-[0.025em] ml-[0.05em] bg-job-blue rounded-full align-middle relative -top-[0.12em]"></span>B509
+            <% end %>
+
+            <%# Main Navigation %>
+            <div class="hidden md:flex items-center space-x-8 text-sm">
+              <%= link_to t("nav.jobs"), jobs_path, class: "hover:text-gray-600 dark:hover:text-gray-300 transition-colors" %>
+              <%= link_to t("nav.about"), about_path, class: "hover:text-gray-600 dark:hover:text-gray-300 transition-colors" %>
+              <%= link_to t("nav.faq"), faq_path, class: "hover:text-gray-600 dark:hover:text-gray-300 transition-colors" %>
+              <%= link_to t("nav.contact"), contact_path, class: "hover:text-gray-600 dark:hover:text-gray-300 transition-colors" %>
+            </div>
+          </div>
+
+          <%# User Navigation %>
+          <div class="flex items-center space-x-6">
+            <%# Dark Mode Toggle %>
+            <button type="button"
+                    data-action="click->dark-mode#toggle"
+                    class="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                    title="Toggle dark mode">
+              <span data-dark-mode-target="icon">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path></svg>
+              </span>
+            </button>
+
+            <%# Language Switcher %>
+            <div class="hidden md:flex items-center space-x-3 text-sm">
+              <%= link_to "FR", url_for(locale: :fr), class: "hover:text-gray-600 dark:hover:text-gray-300 transition-colors #{'font-semibold' if I18n.locale == :fr}" %>
+              <span class="text-gray-400 dark:text-gray-600">|</span>
+              <%= link_to "EN", url_for(locale: :en), class: "hover:text-gray-600 dark:hover:text-gray-300 transition-colors #{'font-semibold' if I18n.locale == :en}" %>
+            </div>
+
+            <% if user_signed_in? %>
+              <div class="hidden md:flex items-center space-x-6 text-sm">
+                <% if current_user.employer? %>
+                  <%= link_to t("nav.post_job"), new_job_path, class: "bg-job-blue hover:bg-job-blue-dark text-white px-4 py-2 font-medium transition-colors" %>
+                  <%= link_to t("nav.my_jobs"), employer_jobs_path, class: "hover:text-gray-600 dark:hover:text-gray-300 transition-colors" %>
+                <% else %>
+                  <%= link_to t("nav.my_resume"), edit_resume_path, class: "hover:text-gray-600 dark:hover:text-gray-300 transition-colors" %>
+                  <%= link_to t("nav.my_jobs"), myjobs_jobs_path, class: "hover:text-gray-600 dark:hover:text-gray-300 transition-colors" %>
+                <% end %>
+                <span class="text-gray-500 dark:text-gray-400"><%= current_user.firstname %></span>
+                <%= button_to t("nav.logout"), destroy_user_session_path, method: :delete, class: "hover:text-gray-600 dark:hover:text-gray-300 transition-colors" %>
+              </div>
+            <% else %>
+              <div class="flex items-center space-x-4 text-sm">
+                <%= link_to t("nav.login"), new_user_session_path, class: "hover:text-gray-600 dark:hover:text-gray-300 transition-colors" %>
+                <%= link_to t("nav.signup"), new_user_registration_path, class: "bg-job-blue hover:bg-job-blue-dark text-white px-4 py-2 font-medium transition-colors" %>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </nav>
+    </header>
+
+    <%# Flash Messages %>
+    <% if notice.present? %>
+      <div class="bg-job-blue/10 dark:bg-job-blue/20 border-b border-job-blue/30 dark:border-job-blue/40 text-job-blue-dark dark:text-job-blue-light px-6 py-4" role="alert">
+        <div class="max-w-6xl mx-auto">
+          <span><%= notice %></span>
+        </div>
+      </div>
+    <% end %>
+
+    <% if alert.present? %>
+      <div class="bg-gray-100 dark:bg-gray-800 border-b border-gray-300 dark:border-gray-700 text-gray-800 dark:text-gray-200 px-6 py-4" role="alert">
+        <div class="max-w-6xl mx-auto">
+          <span><%= alert %></span>
+        </div>
+      </div>
+    <% end %>
+
+    <%# Main Content %>
+    <main class="flex-grow">
+      <div class="max-w-6xl mx-auto px-6 py-12">
+        <%= yield %>
+      </div>
+    </main>
+
+    <%# Footer %>
+    <footer class="bg-white text-gray-900 dark:bg-black dark:text-white border-t border-gray-200 dark:border-gray-800">
+      <div class="max-w-6xl mx-auto px-6 py-16">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-12">
+          <%# About %>
+          <div>
+            <h3 class="text-sm font-semibold uppercase tracking-wider mb-4">J<span class="inline-block w-[0.80em] h-[0.80em] mr-[0.025em] ml-[0.05em] bg-job-blue rounded-full align-middle relative -top-[0.12em]"></span>B509</h3>
+            <p class="text-gray-500 dark:text-gray-400 text-sm leading-relaxed"><%= t("site.description") %></p>
+          </div>
+
+          <%# Quick Links %>
+          <div>
+            <h3 class="text-sm font-semibold uppercase tracking-wider mb-4"><%= t("nav.jobs") %></h3>
+            <ul class="space-y-3 text-sm">
+              <li><%= link_to t("jobs.search_placeholder"), jobs_path, class: "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors" %></li>
+              <li><%= link_to t("nav.post_job"), new_user_registration_path, class: "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors" %></li>
+            </ul>
+          </div>
+
+          <%# Company %>
+          <div>
+            <h3 class="text-sm font-semibold uppercase tracking-wider mb-4"><%= t("site.name") %></h3>
+            <ul class="space-y-3 text-sm">
+              <li><%= link_to t("nav.about"), about_path, class: "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors" %></li>
+              <li><%= link_to t("nav.faq"), faq_path, class: "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors" %></li>
+              <li><%= link_to t("nav.contact"), contact_path, class: "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors" %></li>
+              <li><%= link_to t("nav.advertise"), advertise_path, class: "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors" %></li>
+            </ul>
+          </div>
+
+          <%# Events - only show if there are upcoming events %>
+          <% upcoming_events = Event.where("starts_at >= ?", Time.current).exists? rescue false %>
+          <% if upcoming_events %>
+            <div>
+              <h3 class="text-sm font-semibold uppercase tracking-wider mb-4"><%= t("events.title") %></h3>
+              <ul class="space-y-3 text-sm">
+                <li><%= link_to t("events.upcoming"), events_path, class: "text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors" %></li>
+              </ul>
+            </div>
+          <% end %>
+        </div>
+
+        <div class="border-t border-gray-200 dark:border-gray-800 mt-12 pt-8 text-center text-sm text-gray-500">
+          <p>&copy; <%= Date.current.year %> JOB509. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

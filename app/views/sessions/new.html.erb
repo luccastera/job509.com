@@ -1,0 +1,37 @@
+<div class="max-w-md mx-auto">
+  <h1 class="text-3xl font-bold text-gray-900 dark:text-white text-center mb-8"><%= t("nav.login") %></h1>
+
+  <div class="border border-gray-200 dark:border-gray-800 p-8">
+    <%= form_for(resource, as: resource_name, url: user_session_path, html: { class: "space-y-6" }) do |f| %>
+      <div>
+        <%= f.label :email, t("users.email"), class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "w-full px-4 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:border-gray-900 dark:focus:border-white transition-colors" %>
+      </div>
+
+      <div>
+        <%= f.label :password, t("users.password"), class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2" %>
+        <%= f.password_field :password, autocomplete: "current-password", class: "w-full px-4 py-3 border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:outline-none focus:border-gray-900 dark:focus:border-white transition-colors" %>
+      </div>
+
+      <div class="flex items-center justify-between">
+        <label class="flex items-center cursor-pointer">
+          <%= f.check_box :remember_me, class: "border-gray-300 dark:border-gray-600 text-gray-900 dark:text-white focus:ring-0" %>
+          <span class="ml-2 text-sm text-gray-600 dark:text-gray-400"><%= t("users.remember_me") %></span>
+        </label>
+
+        <%= link_to t("users.forgot_password"), new_user_password_path, class: "text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors" %>
+      </div>
+
+      <div>
+        <%= f.submit t("nav.login"), class: "w-full bg-gray-900 dark:bg-white text-white dark:text-gray-900 py-3 font-medium hover:bg-gray-700 dark:hover:bg-gray-200 transition-colors cursor-pointer" %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mt-8 text-center">
+    <p class="text-gray-500 dark:text-gray-400">
+      Don't have an account?
+      <%= link_to t("nav.signup"), new_user_registration_path, class: "text-gray-900 dark:text-white hover:text-job-blue dark:hover:text-job-blue-light font-medium transition-colors" %>
+    </p>
+  </div>
+</div>

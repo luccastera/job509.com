@@ -1,0 +1,66 @@
+<div class="max-w-md mx-auto">
+  <h1 class="text-3xl font-bold text-job-blue-dark text-center mb-2"><%= t("nav.employer_signup") %></h1>
+  <p class="text-gray-600 text-center mb-8">Create your employer account to start posting jobs</p>
+
+  <div class="bg-white rounded-lg shadow-md p-8">
+    <%= form_for(resource, as: resource_name, url: emp_signup_path, html: { class: "space-y-6" }) do |f| %>
+      <% if resource.errors.any? %>
+        <div class="bg-red-50 border border-red-400 text-red-700 px-4 py-3 rounded">
+          <ul class="list-disc list-inside">
+            <% resource.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <%= f.label :firstname, t("users.first_name"), class: "block text-sm font-medium text-gray-700" %>
+          <%= f.text_field :firstname, class: "mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-job-blue focus:border-job-blue" %>
+        </div>
+
+        <div>
+          <%= f.label :lastname, t("users.last_name"), class: "block text-sm font-medium text-gray-700" %>
+          <%= f.text_field :lastname, class: "mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-job-blue focus:border-job-blue" %>
+        </div>
+      </div>
+
+      <div>
+        <%= f.label :email, t("users.email"), class: "block text-sm font-medium text-gray-700" %>
+        <%= f.email_field :email, autofocus: true, autocomplete: "email", class: "mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-job-blue focus:border-job-blue" %>
+      </div>
+
+      <div>
+        <%= f.label :phone, t("users.phone"), class: "block text-sm font-medium text-gray-700" %>
+        <%= f.telephone_field :phone, class: "mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-job-blue focus:border-job-blue" %>
+      </div>
+
+      <div>
+        <%= f.label :password, t("users.password"), class: "block text-sm font-medium text-gray-700" %>
+        <%= f.password_field :password, autocomplete: "new-password", class: "mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-job-blue focus:border-job-blue" %>
+        <p class="mt-1 text-sm text-gray-500"><%= @minimum_password_length || 6 %> characters minimum</p>
+      </div>
+
+      <div>
+        <%= f.label :password_confirmation, t("users.password_confirmation"), class: "block text-sm font-medium text-gray-700" %>
+        <%= f.password_field :password_confirmation, autocomplete: "new-password", class: "mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-job-blue focus:border-job-blue" %>
+      </div>
+
+      <div>
+        <%= f.submit t("nav.signup"), class: "w-full bg-job-blue hover:bg-job-blue-light text-white py-3 rounded-lg font-medium transition cursor-pointer" %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="mt-6 text-center space-y-2">
+    <p class="text-gray-600">
+      Already have an account?
+      <%= link_to t("nav.login"), new_user_session_path, class: "text-job-blue hover:text-job-blue-dark font-medium" %>
+    </p>
+    <p class="text-gray-600">
+      Looking for a job?
+      <%= link_to t("nav.job_seeker_signup"), new_user_registration_path, class: "text-job-blue hover:text-job-blue-dark font-medium" %>
+    </p>
+  </div>
+</div>

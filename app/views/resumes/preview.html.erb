@@ -1,0 +1,135 @@
+<div class="resume-preview max-w-3xl mx-auto p-8">
+  <%# Header %>
+  <div class="text-center border-b-2 border-gray-800 pb-4 mb-6">
+    <h1 class="text-3xl font-bold text-gray-800"><%= @resume.user.full_name %></h1>
+    <div class="text-gray-600 mt-2">
+      <span><%= @resume.user.email %></span>
+      <% if @resume.user.phone.present? %>
+        <span class="mx-2">|</span>
+        <span><%= @resume.user.phone %></span>
+      <% end %>
+    </div>
+    <% if @resume.city || @resume.country %>
+      <div class="text-gray-600">
+        <%= [@resume.city&.name, @resume.country&.name].compact.join(", ") %>
+      </div>
+    <% end %>
+  </div>
+
+  <%# Objective %>
+  <% if @resume.objective.present? %>
+    <div class="mb-6">
+      <h2 class="text-lg font-bold text-gray-800 border-b border-gray-300 mb-2">OBJECTIVE</h2>
+      <p class="text-gray-700"><%= @resume.objective %></p>
+    </div>
+  <% end %>
+
+  <%# Summary %>
+  <div class="mb-6">
+    <h2 class="text-lg font-bold text-gray-800 border-b border-gray-300 mb-2">SUMMARY</h2>
+    <div class="grid grid-cols-2 gap-2 text-sm text-gray-700">
+      <% if @resume.sector %>
+        <div><strong>Industry:</strong> <%= @resume.sector.name %></div>
+      <% end %>
+      <% if @resume.years_of_experience %>
+        <div><strong>Experience:</strong> <%= @resume.years_of_experience %> years</div>
+      <% end %>
+      <% if @resume.nationality %>
+        <div><strong>Nationality:</strong> <%= @resume.nationality.name %></div>
+      <% end %>
+      <% if @resume.has_drivers_license %>
+        <div><strong>Driver's License:</strong> Yes</div>
+      <% end %>
+    </div>
+  </div>
+
+  <%# Education %>
+  <% if @resume.educations.any? %>
+    <div class="mb-6">
+      <h2 class="text-lg font-bold text-gray-800 border-b border-gray-300 mb-2">EDUCATION</h2>
+      <% @resume.educations.each do |education| %>
+        <div class="mb-3">
+          <div class="flex justify-between">
+            <strong><%= education.diploma %></strong>
+            <span class="text-gray-600"><%= education.graduation_year %></span>
+          </div>
+          <div class="text-gray-700"><%= education.school %></div>
+          <% if education.field_of_study.present? %>
+            <div class="text-gray-600 text-sm"><%= education.field_of_study %></div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%# Work Experience %>
+  <% if @resume.work_experiences.any? %>
+    <div class="mb-6">
+      <h2 class="text-lg font-bold text-gray-800 border-b border-gray-300 mb-2">WORK EXPERIENCE</h2>
+      <% @resume.work_experiences.each do |experience| %>
+        <div class="mb-4">
+          <div class="flex justify-between">
+            <strong><%= experience.title %></strong>
+            <span class="text-gray-600">
+              <%= [experience.starting_month, experience.starting_year].compact.join("/") %> -
+              <%= experience.is_current ? "Present" : [experience.ending_month, experience.ending_year].compact.join("/") %>
+            </span>
+          </div>
+          <div class="text-gray-700"><%= experience.company %></div>
+          <% if experience.description.present? %>
+            <div class="text-gray-600 text-sm mt-1"><%= simple_format(experience.description) %></div>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%# Skills %>
+  <% if @resume.skills.any? %>
+    <div class="mb-6">
+      <h2 class="text-lg font-bold text-gray-800 border-b border-gray-300 mb-2">SKILLS</h2>
+      <p class="text-gray-700"><%= @resume.skills.map(&:description).join(" | ") %></p>
+    </div>
+  <% end %>
+
+  <%# Languages %>
+  <% if @resume.language_skills.any? %>
+    <div class="mb-6">
+      <h2 class="text-lg font-bold text-gray-800 border-b border-gray-300 mb-2">LANGUAGES</h2>
+      <% @resume.language_skills.each do |ls| %>
+        <div class="text-gray-700">
+          <strong><%= ls.language.name %>:</strong>
+          Speaking - <%= ls.speaking_level.humanize %>,
+          Writing - <%= ls.writing_level.humanize %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+
+  <%# References %>
+  <% if @resume.referrals.any? %>
+    <div class="mb-6">
+      <h2 class="text-lg font-bold text-gray-800 border-b border-gray-300 mb-2">REFERENCES</h2>
+      <div class="grid grid-cols-2 gap-4">
+        <% @resume.referrals.each do |referral| %>
+          <div>
+            <strong><%= referral.firstname %> <%= referral.lastname %></strong>
+            <div class="text-gray-600 text-sm"><%= referral.relationship %></div>
+            <% if referral.phone.present? %>
+              <div class="text-sm"><%= referral.phone %></div>
+            <% end %>
+            <% if referral.email.present? %>
+              <div class="text-sm"><%= referral.email %></div>
+            <% end %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<div class="text-center mt-8 print:hidden">
+  <button onclick="window.print()" class="bg-job-blue hover:bg-job-blue-light text-white px-6 py-2 rounded-lg">
+    Print Resume
+  </button>
+</div>

@@ -1,0 +1,35 @@
+/*
+ * pgloader configuration for MySQL to PostgreSQL migration
+ *
+ * IMPORTANT: pgloader creates tables itself, so this approach works best
+ * when migrating to a fresh database. For Rails apps, consider using the
+ * bin/migrate_mysql_to_postgres script instead (uses existing schema).
+ *
+ * Install pgloader:
+ *   brew install pgloader        # macOS
+ *   apt install pgloader         # Ubuntu/Debian
+ *
+ * Usage:
+ *   1. Create fresh PostgreSQL database: createdb job509_migrated
+ *   2. Edit connection strings below
+ *   3. Run: pgloader lib/tasks/pgloader.load
+ *
+ * After migration:
+ *   1. Run Rails migrations: bin/rails db:migrate
+ *   2. Verify data in Rails console
+ */
+
+LOAD DATABASE
+     FROM mysql://root:password@localhost:3306/jobyola_production
+     INTO postgresql://localhost/job509_migrated
+
+WITH include drop, create tables, create indexes, reset sequences
+
+CAST type tinyint to boolean using tinyint-to-boolean,
+     type datetime to timestamptz
+
+EXCLUDING TABLE NAMES MATCHING 'schema_migrations', 'ar_internal_metadata'
+
+AFTER LOAD DO
+  $$ UPDATE users SET encrypted_password = '' WHERE encrypted_password IS NOT NULL; $$,
+  $$ UPDATE users SET reset_password_token = NULL; $$;

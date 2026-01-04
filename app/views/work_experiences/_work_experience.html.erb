@@ -1,0 +1,28 @@
+<div class="border-l-4 border-job-blue pl-4 py-2 mb-4" id="<%= dom_id(work_experience) %>">
+  <div class="flex justify-between items-start">
+    <div>
+      <h3 class="font-bold text-gray-800"><%= work_experience.title %></h3>
+      <p class="text-job-blue"><%= work_experience.company %></p>
+      <p class="text-gray-600 text-sm">
+        <%= [work_experience.starting_month, work_experience.starting_year].compact.join("/") %>
+        -
+        <% if work_experience.is_current %>
+          <%= t("resume.present") %>
+        <% else %>
+          <%= [work_experience.ending_month, work_experience.ending_year].compact.join("/") %>
+        <% end %>
+      </p>
+      <% if work_experience.description.present? %>
+        <p class="text-gray-700 mt-2 text-sm"><%= truncate(work_experience.description, length: 200) %></p>
+      <% end %>
+    </div>
+    <div class="flex space-x-2">
+      <%= button_to resume_work_experience_path(work_experience),
+                    method: :delete,
+                    class: "text-red-600 hover:text-red-800 text-sm",
+                    data: { turbo_confirm: t("helpers.confirm") } do %>
+        <%= t("helpers.submit.delete") %>
+      <% end %>
+    </div>
+  </div>
+</div>

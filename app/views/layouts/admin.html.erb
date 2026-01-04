@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="<%= I18n.locale %>" class="">
+  <head>
+    <title>Admin - <%= content_for(:title) || "JOB509" %></title>
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <link rel="icon" href="/icon.png" type="image/png">
+    <link rel="icon" href="/icon.svg" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/icon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Zalando+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <script>
+      if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        document.documentElement.classList.add('dark')
+      }
+    </script>
+
+    <%= stylesheet_link_tag "tailwind", "data-turbo-track": "reload" %>
+    <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
+    <%= javascript_importmap_tags %>
+  </head>
+
+  <body class="min-h-screen bg-gray-50 dark:bg-gray-950 text-gray-900 dark:text-gray-100 transition-colors duration-200">
+    <div class="flex">
+      <%# Sidebar %>
+      <aside class="w-64 bg-gray-900 dark:bg-black text-white h-screen fixed border-r border-gray-800 flex flex-col">
+        <div class="p-6 flex-shrink-0">
+          <%= link_to lakay_root_path, class: "text-lg font-semibold hover:text-gray-300 transition-colors" do %>
+            J<span class="inline-block w-[0.80em] h-[0.80em] mr-[0.025em] ml-[0.05em] bg-job-blue rounded-full align-middle relative -top-[0.12em]"></span>B509 Admin
+          <% end %>
+        </div>
+
+        <% if admin_signed_in? %>
+          <nav class="mt-4 flex-1 overflow-y-auto admin-sidebar-scroll">
+            <div class="px-6 py-2 text-gray-500 text-xs uppercase tracking-wider">
+              <%= t("admin.dashboard") %>
+            </div>
+            <ul>
+              <li>
+                <%= link_to lakay_root_path, class: "block px-6 py-2 text-sm hover:bg-gray-800 transition-colors" do %>
+                  Dashboard
+                <% end %>
+              </li>
+              <li>
+                <%= link_to lakay_stats_path, class: "block px-6 py-2 text-sm hover:bg-gray-800 transition-colors" do %>
+                  <%= t("admin.statistics") %>
+                <% end %>
+              </li>
+              <li>
+                <%= link_to lakay_accounting_path, class: "block px-6 py-2 text-sm hover:bg-gray-800 transition-colors" do %>
+                  <%= t("admin.accounting") %>
+                <% end %>
+              </li>
+            </ul>
+
+            <div class="px-6 py-2 mt-6 text-gray-500 text-xs uppercase tracking-wider">
+              <%= t("admin.jobs") %>
+            </div>
+            <ul>
+              <li>
+                <%= link_to lakay_jobs_path, class: "block px-6 py-2 text-sm hover:bg-gray-800 transition-colors" do %>
+                  All Jobs
+                <% end %>
+              </li>
+              <li>
+                <%= link_to approvals_lakay_jobs_path, class: "block px-6 py-2 text-sm hover:bg-gray-800 transition-colors" do %>
+                  Pending Approval
+                <% end %>
+              </li>
+            </ul>
+
+            <div class="px-6 py-2 mt-6 text-gray-500 text-xs uppercase tracking-wider">
+              Users
+            </div>
+            <ul>
+              <li>
+                <%= link_to lakay_job_seekers_path, class: "block px-6 py-2 text-sm hover:bg-gray-800 transition-colors" do %>
+                  <%= t("admin.job_seekers") %>
+                <% end %>
+              </li>
+              <li>
+                <%= link_to lakay_employers_path, class: "block px-6 py-2 text-sm hover:bg-gray-800 transition-colors" do %>
+                  <%= t("admin.employers") %>
+                <% end %>
+              </li>
+            </ul>
+
+            <div class="px-6 py-2 mt-6 text-gray-500 text-xs uppercase tracking-wider">
+              Content
+            </div>
+            <ul>
+              <li>
+                <%= link_to lakay_events_path, class: "block px-6 py-2 text-sm hover:bg-gray-800 transition-colors" do %>
+                  <%= t("admin.events") %>
+                <% end %>
+              </li>
+              <li>
+                <%= link_to lakay_coupons_path, class: "block px-6 py-2 text-sm hover:bg-gray-800 transition-colors" do %>
+                  <%= t("admin.coupons") %>
+                <% end %>
+              </li>
+              <li>
+                <%= link_to lakay_featured_recruiters_path, class: "block px-6 py-2 text-sm hover:bg-gray-800 transition-colors" do %>
+                  <%= t("admin.featured_recruiters") %>
+                <% end %>
+              </li>
+              <li>
+                <%= link_to lakay_tags_path, class: "block px-6 py-2 text-sm hover:bg-gray-800 transition-colors" do %>
+                  <%= t("admin.tags") %>
+                <% end %>
+              </li>
+              <li>
+                <%= link_to lakay_lists_path, class: "block px-6 py-2 text-sm hover:bg-gray-800 transition-colors" do %>
+                  <%= t("admin.lists") %>
+                <% end %>
+              </li>
+            </ul>
+
+            <% if current_admin&.super_admin? %>
+              <div class="px-6 py-2 mt-6 text-gray-500 text-xs uppercase tracking-wider">
+                System
+              </div>
+              <ul>
+                <li>
+                  <%= link_to lakay_administrators_path, class: "block px-6 py-2 text-sm hover:bg-gray-800 transition-colors" do %>
+                    <%= t("admin.administrators") %>
+                  <% end %>
+                </li>
+              </ul>
+            <% end %>
+          </nav>
+
+          <div class="flex-shrink-0 p-6 border-t border-gray-800 bg-gray-900 dark:bg-black">
+            <div class="text-sm text-gray-400 mb-2"><%= current_admin.name %></div>
+            <%= button_to lakay_logout_path, method: :delete, class: "text-sm text-gray-400 hover:text-white transition-colors" do %>
+              <%= t("nav.logout") %>
+            <% end %>
+          </div>
+        <% end %>
+      </aside>
+
+      <%# Main Content %>
+      <main class="ml-64 flex-1 p-8">
+        <%# Flash Messages %>
+        <% if notice.present? %>
+          <div class="bg-job-blue/10 dark:bg-job-blue/20 border border-job-blue/30 dark:border-job-blue/40 text-job-blue-dark dark:text-job-blue-light px-4 py-3 mb-6" role="alert">
+            <%= notice %>
+          </div>
+        <% end %>
+
+        <% if alert.present? %>
+          <div class="bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 text-gray-800 dark:text-gray-200 px-4 py-3 mb-6" role="alert">
+            <%= alert %>
+          </div>
+        <% end %>
+
+        <%= yield %>
+      </main>
+    </div>
+  </body>
+</html>

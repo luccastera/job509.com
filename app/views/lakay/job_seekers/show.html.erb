@@ -1,0 +1,233 @@
+<div class="flex justify-between items-center mb-6">
+  <div>
+    <h1 class="text-2xl font-bold text-gray-800"><%= @job_seeker.full_name %></h1>
+    <% if @job_seeker.resume&.is_recommended %>
+      <span class="px-2 py-1 rounded text-xs bg-green-100 text-green-800">Recommended</span>
+    <% end %>
+  </div>
+  <div class="flex space-x-4">
+    <% if @job_seeker.resume %>
+      <%= link_to "Download PDF", pdf_lakay_job_seeker_path(@job_seeker, format: :pdf), class: "bg-job-blue hover:bg-job-blue-light text-white px-4 py-2 rounded-lg" %>
+      <% if @job_seeker.resume.is_recommended %>
+        <%= button_to t("admin.unrecommend"), unrecommend_lakay_job_seeker_path(@job_seeker), method: :patch, class: "bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg" %>
+      <% else %>
+        <%= button_to t("admin.recommend"), recommend_lakay_job_seeker_path(@job_seeker), method: :patch, class: "bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg" %>
+      <% end %>
+    <% end %>
+    <%= link_to t("actions.back"), lakay_job_seekers_path, class: "text-gray-600 hover:underline" %>
+  </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+  <%# Main Content %>
+  <div class="lg:col-span-2 space-y-6">
+    <% if @job_seeker.resume %>
+      <% resume = @job_seeker.resume %>
+
+      <% if resume.objective.present? %>
+        <div class="bg-white rounded-lg shadow p-6">
+          <h2 class="text-lg font-bold text-gray-800 mb-4"><%= t("resume.objective") %></h2>
+          <p class="text-gray-700"><%= resume.objective %></p>
+        </div>
+      <% end %>
+
+      <% if resume.educations.any? %>
+        <div class="bg-white rounded-lg shadow p-6">
+          <h2 class="text-lg font-bold text-gray-800 mb-4"><%= t("resume.education") %></h2>
+          <% resume.educations.each do |education| %>
+            <div class="border-l-4 border-job-blue pl-4 mb-4">
+              <h3 class="font-bold"><%= education.diploma %></h3>
+              <p class="text-job-blue"><%= education.school %></p>
+              <p class="text-sm text-gray-600"><%= education.field_of_study %> - <%= education.graduation_year %></p>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+
+      <% if resume.work_experiences.any? %>
+        <div class="bg-white rounded-lg shadow p-6">
+          <h2 class="text-lg font-bold text-gray-800 mb-4"><%= t("resume.experience") %></h2>
+          <% resume.work_experiences.each do |exp| %>
+            <div class="border-l-4 border-job-blue pl-4 mb-4">
+              <h3 class="font-bold"><%= exp.title %></h3>
+              <p class="text-job-blue"><%= exp.company %></p>
+              <p class="text-sm text-gray-600">
+                <%= [exp.starting_month, exp.starting_year].compact.join("/") %> -
+                <%= exp.is_current ? "Present" : [exp.ending_month, exp.ending_year].compact.join("/") %>
+              </p>
+              <% if exp.description.present? %>
+                <p class="text-gray-700 mt-2"><%= truncate(exp.description, length: 300) %></p>
+              <% end %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+
+      <% if resume.skills.any? %>
+        <div class="bg-white rounded-lg shadow p-6">
+          <h2 class="text-lg font-bold text-gray-800 mb-4"><%= t("resume.skills") %></h2>
+          <div class="flex flex-wrap gap-2">
+            <% resume.skills.each do |skill| %>
+              <span class="bg-gray-100 text-gray-800 px-3 py-1 rounded-full text-sm"><%= skill.description %></span>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+    <% else %>
+      <div class="bg-white rounded-lg shadow p-6 text-center text-gray-500">
+        No resume created yet.
+      </div>
+    <% end %>
+  </div>
+
+  <%# Sidebar %>
+  <div class="space-y-6">
+    <div class="bg-white rounded-lg shadow p-6">
+      <h2 class="text-lg font-bold text-gray-800 mb-4">Contact</h2>
+      <dl class="space-y-3">
+        <div>
+          <dt class="text-sm text-gray-500">Email</dt>
+          <dd class="font-medium"><%= @job_seeker.email %></dd>
+        </div>
+        <div>
+          <dt class="text-sm text-gray-500">Phone</dt>
+          <dd class="font-medium"><%= @job_seeker.phone || "-" %></dd>
+        </div>
+        <% if @job_seeker.alternate_phone.present? %>
+          <div>
+            <dt class="text-sm text-gray-500">Alt. Phone</dt>
+            <dd class="font-medium"><%= @job_seeker.alternate_phone %></dd>
+          </div>
+        <% end %>
+        <div>
+          <dt class="text-sm text-gray-500">Registered</dt>
+          <dd class="font-medium"><%= @job_seeker.created_at.strftime("%B %d, %Y") %></dd>
+        </div>
+      </dl>
+    </div>
+
+    <% if @job_seeker.resume %>
+      <div class="bg-white rounded-lg shadow p-6">
+        <h2 class="text-lg font-bold text-gray-800 mb-4">Profile</h2>
+        <dl class="space-y-3">
+          <% if @job_seeker.resume.sector %>
+            <div>
+              <dt class="text-sm text-gray-500">Sector</dt>
+              <dd class="font-medium"><%= @job_seeker.resume.sector.name %></dd>
+            </div>
+          <% end %>
+          <div>
+            <dt class="text-sm text-gray-500">Experience</dt>
+            <dd class="font-medium"><%= @job_seeker.resume.years_of_experience || 0 %> years</dd>
+          </div>
+          <% if @job_seeker.resume.city || @job_seeker.resume.country %>
+            <div>
+              <dt class="text-sm text-gray-500">Location</dt>
+              <dd class="font-medium"><%= [@job_seeker.resume.city&.name, @job_seeker.resume.country&.name].compact.join(", ") %></dd>
+            </div>
+          <% end %>
+        </dl>
+      </div>
+
+      <% if @job_seeker.resume.language_skills.any? %>
+        <div class="bg-white rounded-lg shadow p-6">
+          <h2 class="text-lg font-bold text-gray-800 mb-4">Languages</h2>
+          <% @job_seeker.resume.language_skills.each do |ls| %>
+            <div class="mb-2">
+              <span class="font-medium"><%= ls.language.name %>:</span>
+              <span class="text-sm text-gray-600">
+                Speaking: <%= ls.speaking_level.humanize %>,
+                Writing: <%= ls.writing_level.humanize %>
+              </span>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+    <% end %>
+
+    <div class="bg-white rounded-lg shadow p-6">
+      <h2 class="text-lg font-bold text-gray-800 mb-4">Applications</h2>
+      <p class="text-3xl font-bold text-job-blue"><%= @job_seeker.applics.count %></p>
+    </div>
+
+    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 p-6">
+      <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Tags</h2>
+
+      <% if @job_seeker.tags.any? %>
+        <div class="flex flex-wrap gap-2 mb-4">
+          <% @job_seeker.tags.each do |tag| %>
+            <span class="inline-flex items-center gap-1 bg-job-blue/10 text-job-blue-dark dark:text-job-blue-light px-3 py-1 text-sm">
+              <% if tag.icon.attached? %>
+                <%= image_tag tag.icon, class: "h-4 w-4" %>
+              <% end %>
+              <%= tag.name %>
+              <%= button_to "×", remove_tag_lakay_job_seeker_path(@job_seeker, tag_id: tag.id), method: :delete, class: "ml-1 text-job-red hover:text-job-red-dark font-bold", data: { turbo_confirm: "Remove tag '#{tag.name}'?" } %>
+            </span>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">No tags assigned.</p>
+      <% end %>
+
+      <% available_tags = Tag.where.not(id: @job_seeker.tag_ids).alphabetical %>
+      <% if available_tags.any? %>
+        <%= form_with url: add_tag_lakay_job_seeker_path(@job_seeker), method: :post, class: "flex gap-2" do %>
+          <select name="tag_id" class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:border-job-blue">
+            <option value="">Select tag...</option>
+            <% available_tags.each do |tag| %>
+              <option value="<%= tag.id %>"><%= tag.name %></option>
+            <% end %>
+          </select>
+          <button type="submit" class="bg-job-blue hover:bg-job-blue-dark text-white px-3 py-2 text-sm font-medium transition-colors">Add</button>
+        <% end %>
+      <% elsif Tag.any? %>
+        <p class="text-xs text-gray-400 dark:text-gray-500 italic">All tags assigned</p>
+      <% else %>
+        <p class="text-xs text-gray-400 dark:text-gray-500 italic"><%= link_to "Create tags", new_lakay_tag_path, class: "text-job-blue hover:underline" %> to assign them</p>
+      <% end %>
+    </div>
+
+    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 p-6">
+      <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Lists</h2>
+
+      <% user_lists = @job_seeker.lists %>
+      <% if user_lists.any? %>
+        <div class="flex flex-wrap gap-2 mb-4">
+          <% user_lists.each do |list| %>
+            <span class="inline-flex items-center gap-1 bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300 px-3 py-1 text-sm">
+              <%= list.name %>
+              <%= button_to "×", remove_from_list_lakay_job_seeker_path(@job_seeker, list_id: list.id), method: :delete, class: "ml-1 text-green-600 dark:text-green-400 hover:text-green-800 dark:hover:text-green-200 font-bold", data: { turbo_confirm: "Remove from list '#{list.name}'?" } %>
+            </span>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mb-4">Not in any lists.</p>
+      <% end %>
+
+      <% available_lists = List.where.not(id: user_lists.pluck(:id)).alphabetical %>
+      <% if available_lists.any? %>
+        <%= form_with url: add_to_list_lakay_job_seeker_path(@job_seeker), method: :post, class: "flex gap-2" do %>
+          <select name="list_id" class="flex-1 px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white text-sm focus:outline-none focus:border-job-blue">
+            <option value="">Select list...</option>
+            <% available_lists.each do |list| %>
+              <option value="<%= list.id %>"><%= list.name %></option>
+            <% end %>
+          </select>
+          <button type="submit" class="bg-job-blue hover:bg-job-blue-dark text-white px-3 py-2 text-sm font-medium transition-colors">Add</button>
+        <% end %>
+      <% elsif List.any? %>
+        <p class="text-xs text-gray-400 dark:text-gray-500 italic">In all lists</p>
+      <% else %>
+        <p class="text-xs text-gray-400 dark:text-gray-500 italic"><%= link_to "Create lists", new_lakay_list_path, class: "text-job-blue hover:underline" %> to add users</p>
+      <% end %>
+    </div>
+
+    <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 p-6">
+      <h2 class="text-lg font-bold text-gray-800 dark:text-white mb-4">Admin Notes</h2>
+      <%= form_with model: @job_seeker, url: lakay_job_seeker_path(@job_seeker), method: :patch do |f| %>
+        <%= f.text_area :job509_comments, rows: 4, class: "w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:border-job-blue", placeholder: "Internal notes..." %>
+        <%= f.submit "Save Notes", class: "mt-2 bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 cursor-pointer text-sm" %>
+      <% end %>
+    </div>
+  </div>
+</div>

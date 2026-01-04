@@ -1,0 +1,41 @@
+<%= form_with model: [:lakay, tag], class: "space-y-6" do |f| %>
+  <% if tag.errors.any? %>
+    <div class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3">
+      <ul class="list-disc list-inside">
+        <% tag.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div>
+    <%= f.label :name, class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+    <%= f.text_field :name, class: "w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:border-job-blue" %>
+  </div>
+
+  <div>
+    <%= f.label :description, class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+    <%= f.text_area :description, rows: 3, class: "w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:border-job-blue" %>
+  </div>
+
+  <div>
+    <%= f.label :event_id, "Event (optional)", class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+    <%= f.collection_select :event_id, Event.order(:name), :id, :name, { include_blank: "— None —" }, class: "w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:border-job-blue" %>
+  </div>
+
+  <div>
+    <%= f.label :icon, class: "block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1" %>
+    <% if tag.icon.attached? %>
+      <div class="mb-2">
+        <%= image_tag tag.icon, class: "h-12 w-12 object-contain border border-gray-300 dark:border-gray-600" %>
+      </div>
+    <% end %>
+    <%= f.file_field :icon, accept: "image/*", class: "w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:border-job-blue file:mr-4 file:py-2 file:px-4 file:border-0 file:bg-job-blue file:text-white file:cursor-pointer" %>
+  </div>
+
+  <div class="flex justify-end space-x-4 pt-4">
+    <%= link_to t("actions.cancel"), lakay_tags_path, class: "px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors" %>
+    <%= f.submit class: "px-4 py-2 bg-job-blue hover:bg-job-blue-dark text-white font-medium transition-colors cursor-pointer" %>
+  </div>
+<% end %>

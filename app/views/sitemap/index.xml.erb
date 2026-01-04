@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <%# Static pages %>
+  <url>
+    <loc><%= root_url %></loc>
+    <changefreq>daily</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc><%= about_url %></loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc><%= faq_url %></loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc><%= contact_url %></loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc><%= advertise_url %></loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc><%= events_url %></loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <%# Jobs %>
+  <% @jobs.each do |job| %>
+    <url>
+      <loc><%= job_url(job) %></loc>
+      <lastmod><%= job.updated_at.iso8601 %></lastmod>
+      <changefreq>weekly</changefreq>
+      <priority>0.8</priority>
+    </url>
+  <% end %>
+
+  <%# Events %>
+  <% @events.each do |event| %>
+    <url>
+      <loc><%= event_url(event) %></loc>
+      <lastmod><%= event.updated_at.iso8601 %></lastmod>
+      <changefreq>weekly</changefreq>
+      <priority>0.6</priority>
+    </url>
+  <% end %>
+</urlset>

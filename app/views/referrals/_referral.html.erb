@@ -1,0 +1,22 @@
+<div class="border-l-4 border-job-blue pl-4 py-2 mb-4" id="<%= dom_id(referral) %>">
+  <div class="flex justify-between items-start">
+    <div>
+      <h3 class="font-bold text-gray-800"><%= referral.firstname %> <%= referral.lastname %></h3>
+      <p class="text-gray-600 text-sm"><%= referral.relationship %></p>
+      <% if referral.email.present? %>
+        <p class="text-sm text-gray-700"><%= referral.email %></p>
+      <% end %>
+      <% if referral.phone.present? %>
+        <p class="text-sm text-gray-700"><%= referral.phone %></p>
+      <% end %>
+    </div>
+    <div class="flex space-x-2">
+      <%= button_to resume_referral_path(referral),
+                    method: :delete,
+                    class: "text-red-600 hover:text-red-800 text-sm",
+                    data: { turbo_confirm: t("helpers.confirm") } do %>
+        <%= t("helpers.submit.delete") %>
+      <% end %>
+    </div>
+  </div>
+</div>

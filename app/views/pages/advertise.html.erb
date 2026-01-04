@@ -1,0 +1,37 @@
+<div class="max-w-3xl mx-auto">
+  <h1 class="text-3xl font-bold text-job-blue-dark dark:text-job-blue-light mb-8"><%= t("pages.advertise.title") %></h1>
+
+  <div class="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 p-8">
+    <p class="text-lg text-gray-700 dark:text-gray-300 mb-6">
+      <%= t("pages.advertise.intro") %>
+    </p>
+
+    <h2 class="text-xl font-bold text-job-blue-dark dark:text-job-blue-light mt-8 mb-4"><%= t("pages.advertise.options_title") %></h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="border border-gray-200 dark:border-gray-700 p-6">
+        <h3 class="font-bold text-job-blue-dark dark:text-job-blue-light mb-2"><%= t("pages.advertise.banner_ads.title") %></h3>
+        <p class="text-gray-600 dark:text-gray-400"><%= t("pages.advertise.banner_ads.description") %></p>
+      </div>
+
+      <div class="border border-gray-200 dark:border-gray-700 p-6">
+        <h3 class="font-bold text-job-blue-dark dark:text-job-blue-light mb-2"><%= t("pages.advertise.featured_recruiter.title") %></h3>
+        <p class="text-gray-600 dark:text-gray-400"><%= t("pages.advertise.featured_recruiter.description") %></p>
+      </div>
+
+      <div class="border border-gray-200 dark:border-gray-700 p-6">
+        <h3 class="font-bold text-job-blue-dark dark:text-job-blue-light mb-2"><%= t("pages.advertise.sponsored_jobs.title") %></h3>
+        <p class="text-gray-600 dark:text-gray-400"><%= t("pages.advertise.sponsored_jobs.description") %></p>
+      </div>
+
+      <div class="border border-gray-200 dark:border-gray-700 p-6">
+        <h3 class="font-bold text-job-blue-dark dark:text-job-blue-light mb-2"><%= t("pages.advertise.email_campaigns.title") %></h3>
+        <p class="text-gray-600 dark:text-gray-400"><%= t("pages.advertise.email_campaigns.description") %></p>
+      </div>
+    </div>
+
+    <div class="mt-8 text-center">
+      <p class="text-gray-600 dark:text-gray-400 mb-4"><%= t("pages.advertise.contact_cta") %></p>
+      <%= link_to t("nav.contact"), contact_path, class: "inline-block bg-job-blue hover:bg-job-blue-dark text-white px-6 py-3 font-medium transition" %>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,415 @@
+fr:
+  # Site-wide
+  site:
+    name: "JOB509"
+    tagline: "Le Premier Site d'Emploi en Haiti"
+    description: "Trouvez votre prochaine opportunite de carriere en Haiti"
+
+  # Navigation
+  nav:
+    home: "Accueil"
+    jobs: "Emplois"
+    about: "A Propos"
+    faq: "FAQ"
+    contact: "Contact"
+    advertise: "Publicite"
+    login: "Connexion"
+    logout: "Deconnexion"
+    signup: "S'inscrire"
+    my_account: "Mon Compte"
+    my_resume: "Mon CV"
+    my_jobs: "Mes Emplois"
+    post_job: "Publier un Emploi"
+    employer_signup: "Inscription Employeur"
+    job_seeker_signup: "Inscription Chercheur d'Emploi"
+
+  # Common actions
+  actions:
+    save: "Enregistrer"
+    cancel: "Annuler"
+    edit: "Modifier"
+    delete: "Supprimer"
+    view: "Voir"
+    search: "Rechercher"
+    filter: "Filtrer"
+    apply: "Postuler"
+    submit: "Soumettre"
+    back: "Retour"
+    next: "Suivant"
+    previous: "Precedent"
+    confirm: "Confirmer"
+    print: "Imprimer"
+    download: "Telecharger"
+    share: "Partager"
+    add: "Ajouter"
+    remove: "Retirer"
+    close: "Fermer"
+
+  # Flash messages
+  flash:
+    created: "%{resource} a ete cree avec succes."
+    updated: "%{resource} a ete mis a jour avec succes."
+    deleted: "%{resource} a ete supprime avec succes."
+    error: "Une erreur s'est produite. Veuillez reessayer."
+    not_authorized: "Vous n'etes pas autorise a effectuer cette action."
+    login_required: "Veuillez vous connecter pour continuer."
+    password_reset_sent: "Les instructions de reinitialisation du mot de passe ont ete envoyees a votre adresse email."
+    password_reset_success: "Votre mot de passe a ete reinitialise avec succes."
+
+  # Jobs
+  jobs:
+    title: "Emplois"
+    job: "Emploi"
+    search_placeholder: "Rechercher des emplois..."
+    filter_by_sector: "Filtrer par secteur"
+    filter_by_city: "Filtrer par ville"
+    all_sectors: "Tous les Secteurs"
+    all_cities: "Toutes les Villes"
+    posted: "Publie"
+    expires: "Expire"
+    apply_now: "Postuler Maintenant"
+    apply_external: "Postuler sur le Site de l'Entreprise"
+    company: "Entreprise"
+    location: "Lieu"
+    job_type: "Type d'Emploi"
+    sector: "Secteur"
+    description: "Description"
+    qualifications: "Qualifications"
+    no_jobs_found: "Aucun emploi trouve correspondant a vos criteres."
+    post_new: "Publier un Nouvel Emploi"
+    my_posted_jobs: "Mes Emplois Publies"
+    applications_received: "Candidatures Recues"
+    pending_approval: "En Attente d'Approbation"
+    approved: "Approuve"
+    expired: "Expire"
+
+  # Resume
+  resume:
+    title: "CV"
+    my_resume: "Mon CV"
+    edit_title: "Modifier mon CV"
+    edit_resume: "Modifier le CV"
+    preview: "Apercu"
+    download_pdf: "Telecharger PDF"
+    objective: "Objectif"
+    personal_info: "Informations Personnelles"
+    education: "Formation"
+    experience: "Experience Professionnelle"
+    skills: "Competences"
+    languages: "Langues"
+    references: "References"
+    add_education: "Ajouter une Formation"
+    add_experience: "Ajouter une Experience"
+    add_work_experience: "Ajouter une Experience"
+    add_skill: "Ajouter une Competence"
+    add_language: "Ajouter une Langue"
+    add_referral: "Ajouter une Reference"
+    add_reference: "Ajouter une Reference"
+    years_of_experience: "Annees d'Experience"
+    years: "ans"
+    current_position: "Poste Actuel"
+    diploma: "Diplome"
+    school: "Ecole/Universite"
+    field_of_study: "Domaine d'Etude"
+    graduation_year: "Annee d'Obtention"
+    company: "Entreprise"
+    position: "Poste"
+    from: "De"
+    to: "A"
+    present: "Present"
+    in_progress: "En cours"
+    speaking: "Oral"
+    writing: "Ecrit"
+    no_education: "Aucune formation ajoutee"
+    no_work_experience: "Aucune experience ajoutee"
+    no_skills: "Aucune competence ajoutee"
+    no_languages: "Aucune langue ajoutee"
+    no_referrals: "Aucune reference ajoutee"
+    sections:
+      basic_info: "Informations de Base"
+      location: "Adresse"
+      contact: "Contact"
+      education: "Formation"
+      work_experience: "Experience Professionnelle"
+      skills: "Competences"
+      languages: "Langues"
+      referrals: "References"
+    fields:
+      sex: "Sexe"
+      birth_year: "Annee de naissance"
+      nationality: "Nationalite"
+      sector: "Secteur"
+      years_of_experience: "Annees d'experience"
+      has_drivers_license: "Permis de conduire"
+      objective: "Objectif professionnel"
+      country: "Pays"
+      city: "Ville"
+      address1: "Adresse ligne 1"
+      address2: "Adresse ligne 2"
+      postal_code: "Code postal"
+      location: "Localisation"
+    sex:
+      male: "Homme"
+      female: "Femme"
+    levels:
+      basic: "Base"
+      intermediate: "Intermediaire"
+      fluent: "Courant"
+
+  # Applications
+  applications:
+    title: "Candidatures"
+    my_applications: "Mes Candidatures"
+    cover_letter: "Lettre de Motivation"
+    applied_on: "Postule le"
+    status: "Statut"
+    pending: "En Attente"
+    reviewed: "Examine"
+    starred: "Favori"
+    hidden: "Cache"
+
+  # Users
+  users:
+    job_seeker: "Chercheur d'Emploi"
+    employer: "Employeur"
+    first_name: "Prenom"
+    last_name: "Nom"
+    email: "Email"
+    phone: "Telephone"
+    password: "Mot de Passe"
+    password_confirmation: "Confirmer le Mot de Passe"
+    current_password: "Mot de Passe Actuel"
+    new_password: "Nouveau Mot de Passe"
+    remember_me: "Se Souvenir de Moi"
+    forgot_password: "Mot de Passe Oublie?"
+    reset_password: "Reinitialiser le Mot de Passe"
+    change_password: "Changer le Mot de Passe"
+
+  # Events
+  events:
+    title: "Evenements"
+    upcoming: "Evenements a Venir"
+    past: "Evenements Passes"
+    register: "S'inscrire"
+    location: "Lieu"
+    date: "Date"
+    time: "Heure"
+    cost: "Cout"
+    free: "Gratuit"
+    attendees: "Participants"
+
+  # Static pages
+  pages:
+    about:
+      title: "A Propos de JOB509"
+      intro: "JOB509 est un site Internet dedie a la gestion de carriere et au recrutement en ligne. En plus de vous donner acces a des offres d'emplois de qualite, notre solution vous accompagne dans la realisation d'un CV afin de repondre a toutes les normes internationales."
+      objective_title: "Objectif"
+      objective: "Faciliter et simplifier la mise en relation entre candidats et recruteurs dans tous les secteurs d'activite."
+      for_candidates_title: "Pour les candidats"
+      for_candidates: "Sur JOB509, vous avez acces a une grande quantite d'offres d'emploi en toute simplicite. Chaque annonce fait l'objet d'une etude approfondie par l'equipe de JOB509 pour vous en assurer la pertinence. Une mise a jour quotidienne de notre base de donnees vous garantit la grande qualite de notre service (suppression des postes pourvus, ajout de nouvelles offres, etc...). Une fois votre profil cree, vous serez contactes par mail et/ou SMS des qu'une annonce repond a vos competences. Vous pourrez ainsi postuler tres rapidement pour l'emploi qui vous convient et votre candidature sera etudiee en priorite. L'acces a notre base de donnees de CV est strictement confidentiel, le candidat en postulant a une offre d'emploi rend son CV consultable par cette entreprise."
+      for_recruiters_title: "Pour les recruteurs"
+      for_recruiters: "Afin de simplifier votre recherche, vous recevez les CV directement sur votre compte JOB509. Une premiere selection de candidats en adequation avec votre offre vous est alors proposee. Votre processus de recrutement est donc optimise. La souplesse de notre outil et l'automatisation de certaines taches vous permet ainsi de trouver plus facilement la recrue ideale."
+    faq:
+      title: "Questions Frequemment Posees"
+      q1: "Comment creer un compte?"
+      a1: "Cliquez sur \"S'inscrire\" dans la navigation en haut et remplissez le formulaire d'inscription. Vous pouvez vous inscrire en tant que chercheur d'emploi ou employeur."
+      q2: "Comment postuler a un emploi?"
+      a2: "Assurez-vous d'abord d'avoir cree votre CV. Ensuite, parcourez les offres d'emploi et cliquez sur \"Postuler Maintenant\" pour tout emploi qui vous interesse."
+      q3: "Est-ce gratuit de publier des emplois?"
+      a3: "Veuillez nous contacter pour obtenir des informations sur les tarifs des offres d'emploi. Nous proposons differents forfaits pour repondre a vos besoins de recrutement."
+      q4: "Combien de temps mon offre d'emploi sera-t-elle publiee?"
+      a4: "Les offres d'emploi sont actives pendant 30 jours a compter de la date de publication. Vous pouvez prolonger ou renouveler votre annonce si necessaire."
+      q5: "Puis-je modifier mon CV apres l'avoir soumis?"
+      a5: "Oui, vous pouvez mettre a jour votre CV a tout moment en allant dans \"Mon CV\" dans le menu de navigation."
+    contact:
+      title: "Contactez-Nous"
+      get_in_touch: "Nous Contacter"
+      intro: "Vous avez des questions ou des commentaires? Nous serions ravis de vous entendre."
+      email: "Email"
+      phone: "Telephone"
+      address: "Adresse"
+      office_hours: "Heures d'Ouverture"
+      weekdays: "Lundi - Vendredi"
+      saturday: "Samedi"
+      sunday: "Dimanche"
+      closed: "Ferme"
+    advertise:
+      title: "Faites de la Publicite avec Nous"
+      intro: "Atteignez des milliers de chercheurs d'emploi et d'employeurs qualifies grace aux opportunites publicitaires de JOB509."
+      options_title: "Options Publicitaires"
+      banner_ads:
+        title: "Bannieres Publicitaires"
+        description: "Affichez votre marque de maniere prominente sur notre page d'accueil et nos pages d'offres d'emploi."
+      featured_recruiter:
+        title: "Recruteur en Vedette"
+        description: "Mettez en valeur votre entreprise en tant qu'employeur vedette avec placement de logo."
+      sponsored_jobs:
+        title: "Offres Sponsorisees"
+        description: "Obtenez un placement prioritaire pour vos offres d'emploi en haut des resultats de recherche."
+      email_campaigns:
+        title: "Campagnes Email"
+        description: "Atteignez notre base de donnees de chercheurs d'emploi directement via des campagnes email ciblees."
+      contact_cta: "Contactez-nous pour les tarifs et disponibilites"
+
+  # Admin
+  admin:
+    dashboard: "Tableau de Bord"
+    statistics: "Statistiques"
+    jobs: "Emplois"
+    job_seekers: "Chercheurs d'Emploi"
+    employers: "Employeurs"
+    applications: "Candidatures"
+    events: "Evenements"
+    coupons: "Coupons"
+    tags: "Tags"
+    lists: "Listes"
+    administrators: "Administrateurs"
+    featured_recruiters: "Recruteurs en Vedette"
+    approve: "Approuver"
+    reject: "Rejeter"
+    recommend: "Recommander"
+    unrecommend: "Annuler la Recommandation"
+    bulk_sms: "SMS en Masse"
+    accounting: "Comptabilite"
+
+  # Form labels
+  activerecord:
+    models:
+      user: "Utilisateur"
+      job: "Emploi"
+      resume: "CV"
+      applic: "Candidature"
+      education: "Formation"
+      work_experience: "Experience Professionnelle"
+      skill: "Competence"
+      language_skill: "Competence Linguistique"
+      referral: "Reference"
+      event: "Evenement"
+      attendee: "Participant"
+    attributes:
+      user:
+        email: "Email"
+        password: "Mot de passe"
+        password_confirmation: "Confirmation du mot de passe"
+        firstname: "Prenom"
+        lastname: "Nom"
+        phone: "Telephone"
+        alternate_phone: "Telephone alternatif"
+        role: "Role"
+      job:
+        title: "Titre"
+        company: "Entreprise"
+        company_url: "Site web de l'entreprise"
+        company_description: "Description de l'entreprise"
+        description: "Description du poste"
+        qualifications: "Qualifications"
+        post_date: "Date de publication"
+        apply_url: "URL de candidature"
+      resume:
+        objective: "Objectif"
+        sex: "Sexe"
+        birth_year: "Annee de naissance"
+        years_of_experience: "Annees d'experience"
+        has_drivers_license: "Permis de conduire"
+        address1: "Adresse ligne 1"
+        address2: "Adresse ligne 2"
+        postal_code: "Code postal"
+      education:
+        diploma: "Diplome"
+        school: "Ecole"
+        graduation_year: "Annee d'obtention"
+        field_of_study: "Domaine d'etude"
+        is_completed: "Termine"
+        comments: "Commentaires"
+      work_experience:
+        company: "Entreprise"
+        title: "Titre"
+        description: "Description"
+        starting_month: "Mois de debut"
+        starting_year: "Annee de debut"
+        ending_month: "Mois de fin"
+        ending_year: "Annee de fin"
+        is_current: "Poste actuel"
+        monthly_salary: "Salaire mensuel"
+      skill:
+        description: "Competence"
+      language_skill:
+        speaking_level: "Niveau oral"
+        writing_level: "Niveau ecrit"
+      referral:
+        firstname: "Prenom"
+        lastname: "Nom"
+        phone: "Telephone"
+        email: "Email"
+        relationship: "Relation"
+
+  # Date and time formats
+  date:
+    formats:
+      default: "%d %B %Y"
+      short: "%d %b"
+      long: "%d %B %Y"
+    day_names:
+      - dimanche
+      - lundi
+      - mardi
+      - mercredi
+      - jeudi
+      - vendredi
+      - samedi
+    abbr_day_names:
+      - dim
+      - lun
+      - mar
+      - mer
+      - jeu
+      - ven
+      - sam
+    month_names:
+      - ~
+      - janvier
+      - fevrier
+      - mars
+      - avril
+      - mai
+      - juin
+      - juillet
+      - aout
+      - septembre
+      - octobre
+      - novembre
+      - decembre
+    abbr_month_names:
+      - ~
+      - jan
+      - fev
+      - mar
+      - avr
+      - mai
+      - jun
+      - jul
+      - aou
+      - sep
+      - oct
+      - nov
+      - dec
+  time:
+    formats:
+      default: "%d %B %Y a %H:%M"
+      short: "%d %b, %H:%M"
+      long: "%d %B %Y a %H:%M"
+
+  # Helpers
+  helpers:
+    select:
+      prompt: "Selectionnez..."
+    submit:
+      save: "Enregistrer"
+      create: "Creer"
+      update: "Mettre a jour"
+      delete: "Supprimer"
+    confirm: "Etes-vous sur?"
+
+  # Common
+  yes: "Oui"
+  no: "Non"

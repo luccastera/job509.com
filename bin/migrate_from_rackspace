@@ -1,0 +1,209 @@
+#!/usr/bin/env bash
+#
+# Migrate MySQL database from Rackspace to local PostgreSQL via SSH
+#
+# Usage:
+#   bin/migrate_from_rackspace
+#
+# Required environment variables:
+#   RACKSPACE_SSH_HOST    - SSH hostname (e.g., your-server.rackspace.com)
+#   RACKSPACE_SSH_USER    - SSH username
+#   MYSQL_DATABASE        - MySQL database name (default: jobyola_production)
+#   MYSQL_USER            - MySQL username (default: root)
+#   MYSQL_PASSWORD        - MySQL password
+#
+# Optional:
+#   POSTGRES_DATABASE     - Local PostgreSQL database (default: job509_development)
+#   SSH_KEY               - Path to SSH key (default: ~/.ssh/id_rsa)
+
+set -e
+
+# Colors
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+RED='\033[0;31m'
+NC='\033[0m'
+
+# Configuration
+RACKSPACE_SSH_HOST="${RACKSPACE_SSH_HOST:?Set RACKSPACE_SSH_HOST environment variable}"
+RACKSPACE_SSH_USER="${RACKSPACE_SSH_USER:?Set RACKSPACE_SSH_USER environment variable}"
+MYSQL_DATABASE="${MYSQL_DATABASE:-jobyola_production}"
+MYSQL_USER="${MYSQL_USER:-root}"
+MYSQL_PASSWORD="${MYSQL_PASSWORD:-}"
+POSTGRES_DATABASE="${POSTGRES_DATABASE:-job509_development}"
+SSH_KEY="${SSH_KEY:-$HOME/.ssh/id_rsa}"
+
+DUMP_DIR="tmp/mysql_migration"
+mkdir -p "$DUMP_DIR"
+
+echo -e "${GREEN}=== Rackspace MySQL to Local PostgreSQL Migration ===${NC}"
+echo ""
+echo "Source: $RACKSPACE_SSH_USER@$RACKSPACE_SSH_HOST (MySQL: $MYSQL_DATABASE)"
+echo "Target: PostgreSQL $POSTGRES_DATABASE"
+echo ""
+
+# Tables to migrate (in dependency order)
+TABLES=(
+  countries cities sectors jobtypes languages
+  users jobs resumes
+  educations work_experiences skills language_skills referrals
+  applics events attendees
+  tags taggings lists coupons featured_recruiters share_tokens
+)
+
+# Build MySQL password argument
+MYSQL_PASS_ARG=""
+if [ -n "$MYSQL_PASSWORD" ]; then
+  MYSQL_PASS_ARG="-p'$MYSQL_PASSWORD'"
+fi
+
+echo -e "${GREEN}Step 1: Dumping tables from Rackspace via SSH${NC}"
+
+for table in "${TABLES[@]}"; do
+  echo -e "${YELLOW}  Dumping $table...${NC}"
+
+  # Dump table data as tab-separated values via SSH
+  ssh -i "$SSH_KEY" "$RACKSPACE_SSH_USER@$RACKSPACE_SSH_HOST" \
+    "mysql -u $MYSQL_USER $MYSQL_PASS_ARG $MYSQL_DATABASE \
+     -e 'SELECT * FROM $table' --batch --raw 2>/dev/null || echo ''" \
+    > "$DUMP_DIR/${table}.tsv" 2>/dev/null || true
+
+  # Check if we got data
+  if [ -s "$DUMP_DIR/${table}.tsv" ]; then
+    lines=$(wc -l < "$DUMP_DIR/${table}.tsv" | tr -d ' ')
+    echo "    Got $((lines - 1)) rows"
+  else
+    echo "    No data or table doesn't exist"
+  fi
+done
+
+# Also try lists_users join table
+echo -e "${YELLOW}  Dumping lists_users...${NC}"
+ssh -i "$SSH_KEY" "$RACKSPACE_SSH_USER@$RACKSPACE_SSH_HOST" \
+  "mysql -u $MYSQL_USER $MYSQL_PASS_ARG $MYSQL_DATABASE \
+   -e 'SELECT * FROM lists_users' --batch --raw 2>/dev/null || echo ''" \
+  > "$DUMP_DIR/lists_users.tsv" 2>/dev/null || true
+
+echo ""
+echo -e "${GREEN}Step 2: Preparing PostgreSQL database${NC}"
+
+# Ensure Rails migrations are run
+bin/rails db:migrate 2>/dev/null || true
+
+# Clear existing data
+psql -d "$POSTGRES_DATABASE" << 'EOSQL'
+SET session_replication_role = 'replica';
+
+DO $$
+DECLARE
+  t TEXT;
+BEGIN
+  FOR t IN
+    SELECT tablename FROM pg_tables
+    WHERE schemaname = 'public'
+    AND tablename NOT IN ('schema_migrations', 'ar_internal_metadata')
+  LOOP
+    EXECUTE format('TRUNCATE TABLE %I RESTART IDENTITY CASCADE', t);
+  END LOOP;
+END $$;
+
+SET session_replication_role = 'origin';
+EOSQL
+
+echo ""
+echo -e "${GREEN}Step 3: Importing data into PostgreSQL${NC}"
+
+# Disable triggers for faster import
+psql -d "$POSTGRES_DATABASE" -c "SET session_replication_role = 'replica';" 2>/dev/null
+
+import_table() {
+  local table=$1
+  local file="$DUMP_DIR/${table}.tsv"
+
+  if [ ! -s "$file" ]; then
+    return
+  fi
+
+  # Get header (column names)
+  local header=$(head -1 "$file")
+  local columns=$(echo "$header" | tr '\t' ',')
+
+  # Count data rows
+  local rows=$(($(wc -l < "$file" | tr -d ' ') - 1))
+
+  if [ "$rows" -le 0 ]; then
+    return
+  fi
+
+  echo -e "${YELLOW}  Importing $table ($rows rows)...${NC}"
+
+  # Import data (skip header, handle NULLs)
+  tail -n +2 "$file" | \
+    sed 's/\\N/\\N/g' | \
+    psql -d "$POSTGRES_DATABASE" \
+      -c "\\COPY $table ($columns) FROM STDIN WITH (FORMAT text, NULL '\\N')" 2>/dev/null || \
+    echo "    Warning: Error importing $table"
+}
+
+for table in "${TABLES[@]}"; do
+  import_table "$table"
+done
+
+import_table "lists_users"
+
+# Re-enable triggers
+psql -d "$POSTGRES_DATABASE" -c "SET session_replication_role = 'origin';" 2>/dev/null
+
+echo ""
+echo -e "${GREEN}Step 4: Reset sequences and cleanup${NC}"
+
+psql -d "$POSTGRES_DATABASE" << 'EOSQL'
+-- Reset all sequences
+DO $$
+DECLARE
+  r RECORD;
+  max_id BIGINT;
+BEGIN
+  FOR r IN (
+    SELECT c.table_name, c.column_name
+    FROM information_schema.columns c
+    WHERE c.column_default LIKE 'nextval%'
+    AND c.table_schema = 'public'
+  ) LOOP
+    EXECUTE format('SELECT COALESCE(MAX(%I), 0) FROM %I', r.column_name, r.table_name) INTO max_id;
+    IF max_id > 0 THEN
+      EXECUTE format('SELECT setval(pg_get_serial_sequence(%L, %L), %s)', r.table_name, r.column_name, max_id);
+    END IF;
+  END LOOP;
+END $$;
+
+-- Clear user passwords (they'll need to reset)
+UPDATE users SET encrypted_password = '' WHERE encrypted_password IS NOT NULL;
+UPDATE users SET reset_password_token = NULL, reset_password_sent_at = NULL;
+
+-- Summary
+SELECT 'Migration Summary' as info;
+SELECT table_name,
+       (SELECT count(*) FROM information_schema.columns WHERE table_name = t.table_name) as columns,
+       (xpath('/row/cnt/text()',
+         query_to_xml(format('SELECT count(*) as cnt FROM %I', table_name), false, true, ''))
+       )[1]::text::int as rows
+FROM (
+  SELECT tablename as table_name
+  FROM pg_tables
+  WHERE schemaname = 'public'
+  AND tablename NOT IN ('schema_migrations', 'ar_internal_metadata')
+  ORDER BY tablename
+) t;
+EOSQL
+
+echo ""
+echo -e "${GREEN}=== Migration Complete! ===${NC}"
+echo ""
+echo "Next steps:"
+echo "  1. Verify data: bin/rails console"
+echo "  2. Create admin accounts: bin/rails console"
+echo "     > Administrator.create!(name: 'admin', password: 'secure_password', role: :super)"
+echo "  3. Test the application"
+echo ""
+echo "Cleanup temp files: rm -rf $DUMP_DIR"

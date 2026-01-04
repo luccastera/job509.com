@@ -1,0 +1,117 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: job509-postgres
+  namespace: default
+  labels:
+    app: job509-postgres
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: job509-postgres
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: job509-postgres
+    spec:
+      containers:
+      - name: postgres
+        image: postgres:16-alpine
+        ports:
+        - containerPort: 5432
+          name: postgres
+        env:
+        - name: POSTGRES_DB
+          value: "job509_production"
+        - name: POSTGRES_USER
+          valueFrom:
+            secretKeyRef:
+              name: job509-secrets
+              key: POSTGRES_USER
+        - name: POSTGRES_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: job509-secrets
+              key: POSTGRES_PASSWORD
+        - name: PGDATA
+          value: "/var/lib/postgresql/data/pgdata"
+        resources:
+          requests:
+            memory: "128Mi"
+            cpu: "50m"
+          limits:
+            memory: "256Mi"
+            cpu: "250m"
+        livenessProbe:
+          exec:
+            command:
+            - pg_isready
+            - -U
+            - $(POSTGRES_USER)
+            - -d
+            - job509_production
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
+        readinessProbe:
+          exec:
+            command:
+            - pg_isready
+            - -U
+            - $(POSTGRES_USER)
+            - -d
+            - job509_production
+          initialDelaySeconds: 5
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        volumeMounts:
+        - name: postgres-data
+          mountPath: /var/lib/postgresql/data
+      volumes:
+      - name: postgres-data
+        persistentVolumeClaim:
+          claimName: job509-postgres-pvc
+      nodeSelector:
+        kubernetes.io/arch: arm64
+      tolerations:
+      - key: node.kubernetes.io/arch
+        operator: Equal
+        value: arm64
+        effect: NoSchedule
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: job509-postgres
+  namespace: default
+  labels:
+    app: job509-postgres
+spec:
+  type: ClusterIP
+  ports:
+  - port: 5432
+    targetPort: 5432
+    protocol: TCP
+    name: postgres
+  selector:
+    app: job509-postgres
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: job509-postgres-pvc
+  namespace: default
+  labels:
+    app: job509-postgres
+spec:
+  accessModes:
+  - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: local-path

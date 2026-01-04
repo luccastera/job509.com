@@ -1,0 +1,64 @@
+name: Deploy to Kubernetes
+
+on:
+  workflow_run:
+    workflows: ["Build and Push Docker Image"]
+    types:
+      - completed
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Set up kubectl
+      uses: azure/setup-kubectl@v4
+      with:
+        version: 'latest'
+
+    - name: Configure kubectl
+      env:
+        KUBECONFIG_DATA: ${{ secrets.KUBECONFIG_DATA }}
+      run: |
+        mkdir -p ~/.kube
+        echo "$KUBECONFIG_DATA" | base64 -d > ~/.kube/config
+        chmod 600 ~/.kube/config
+
+    - name: Verify cluster connection
+      run: |
+        kubectl cluster-info
+        kubectl get nodes
+
+    - name: Apply Kubernetes manifests
+      run: |
+        kubectl apply -f k8s/postgres.yaml
+        kubectl apply -f k8s/deployment.yaml
+        kubectl apply -f k8s/ingress.yaml
+
+    - name: Wait for PostgreSQL to be ready
+      run: |
+        kubectl rollout status deployment/job509-postgres -n default --timeout=3m
+
+    - name: Restart Rails deployment to pull latest image
+      run: |
+        kubectl rollout restart deployment/job509 -n default
+
+    - name: Wait for rollout to complete
+      run: |
+        kubectl rollout status deployment/job509 -n default --timeout=5m
+
+    - name: Get deployment status
+      if: always()
+      run: |
+        echo "=== Pods ==="
+        kubectl get pods -l app=job509 -n default
+        kubectl get pods -l app=job509-postgres -n default
+        echo ""
+        echo "=== Deployment ==="
+        kubectl describe deployment job509 -n default

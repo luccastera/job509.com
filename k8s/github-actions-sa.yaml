@@ -1,0 +1,57 @@
+# Service Account for GitHub Actions CI/CD
+#
+# This creates a service account with permissions to deploy to the cluster.
+# The same service account used by pistats can be reused, or create a new one.
+#
+# To get the kubeconfig for GitHub Actions secrets:
+#   kubectl get secret github-actions-token -o jsonpath='{.data.token}' | base64 -d
+#
+# See GITHUB_ACTIONS_SETUP.md for full setup instructions.
+
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: github-actions
+  namespace: default
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: github-actions-deployer
+  namespace: default
+rules:
+- apiGroups: ["apps"]
+  resources: ["deployments"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+- apiGroups: [""]
+  resources: ["services", "persistentvolumeclaims", "configmaps"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+- apiGroups: [""]
+  resources: ["pods"]
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["networking.k8s.io"]
+  resources: ["ingresses"]
+  verbs: ["get", "list", "watch", "create", "update", "patch", "delete"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: github-actions-deployer-binding
+  namespace: default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: github-actions-deployer
+subjects:
+- kind: ServiceAccount
+  name: github-actions
+  namespace: default
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: github-actions-token
+  namespace: default
+  annotations:
+    kubernetes.io/service-account.name: github-actions
+type: kubernetes.io/service-account-token

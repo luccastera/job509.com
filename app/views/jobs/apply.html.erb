@@ -1,0 +1,29 @@
+<div class="max-w-2xl mx-auto">
+  <h1 class="text-3xl font-bold text-job-blue-dark mb-2"><%= t("jobs.apply_now") %></h1>
+  <p class="text-gray-600 mb-8">Applying for: <strong><%= @job.title %></strong> at <strong><%= @job.company %></strong></p>
+
+  <div class="bg-white rounded-lg shadow-md p-8">
+    <%= form_with model: @applic, url: submit_application_job_path(@job), class: "space-y-6" do |f| %>
+      <% if @applic.errors.any? %>
+        <div class="bg-red-50 border border-red-400 text-red-700 px-4 py-3 rounded">
+          <ul class="list-disc list-inside">
+            <% @applic.errors.full_messages.each do |message| %>
+              <li><%= message %></li>
+            <% end %>
+          </ul>
+        </div>
+      <% end %>
+
+      <div>
+        <%= f.label :cover_letter, t("applications.cover_letter"), class: "block text-sm font-medium text-gray-700" %>
+        <%= f.text_area :cover_letter, rows: 10, placeholder: "Tell the employer why you're a great fit for this position...", class: "mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-job-blue focus:border-job-blue" %>
+        <p class="mt-1 text-sm text-gray-500">Your resume will be shared with the employer automatically.</p>
+      </div>
+
+      <div class="flex justify-end space-x-4">
+        <%= link_to t("actions.cancel"), @job, class: "px-6 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition" %>
+        <%= f.submit t("actions.submit"), class: "px-6 py-2 bg-job-blue hover:bg-job-blue-light text-white rounded-lg font-medium transition cursor-pointer" %>
+      </div>
+    <% end %>
+  </div>
+</div>

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>JOB509 - Haiti's Premier Job Board</title>
+    <description>Latest job opportunities in Haiti</description>
+    <link><%= root_url %></link>
+    <atom:link href="<%= feed_url(format: :rss) %>" rel="self" type="application/rss+xml"/>
+    <language><%= I18n.locale %></language>
+    <lastBuildDate><%= @jobs.first&.post_date&.to_fs(:rfc822) || Time.current.to_fs(:rfc822) %></lastBuildDate>
+    <ttl>60</ttl>
+
+    <% @jobs.each do |job| %>
+      <item>
+        <title><%= job.title %> - <%= job.company %></title>
+        <description><![CDATA[
+          <p><strong>Company:</strong> <%= job.company %></p>
+          <p><strong>Location:</strong> <%= job.city&.name %></p>
+          <p><strong>Sector:</strong> <%= job.sector&.name %></p>
+          <% if job.description.present? %>
+            <p><%= truncate(strip_tags(job.description), length: 500) %></p>
+          <% end %>
+        ]]></description>
+        <link><%= job_url(job) %></link>
+        <guid isPermaLink="true"><%= job_url(job) %></guid>
+        <pubDate><%= job.post_date&.to_fs(:rfc822) %></pubDate>
+        <% if job.sector.present? %>
+          <category><%= job.sector.name %></category>
+        <% end %>
+      </item>
+    <% end %>
+  </channel>
+</rss>

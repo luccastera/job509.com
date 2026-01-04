@@ -1,0 +1,30 @@
+<div class="min-h-screen flex items-center justify-center bg-gray-100">
+  <div class="max-w-md w-full">
+    <div class="text-center mb-8">
+      <h1 class="text-3xl font-bold text-job-blue-dark">JOB509 Admin</h1>
+      <p class="text-gray-600 mt-2">Sign in to access the admin panel</p>
+    </div>
+
+    <div class="bg-white rounded-lg shadow-md p-8">
+      <%= form_with url: lakay_login_path, method: :post, class: "space-y-6" do |f| %>
+        <div>
+          <%= f.label :name, "Username", class: "block text-sm font-medium text-gray-700" %>
+          <%= f.text_field :name, autofocus: true, class: "mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-job-blue focus:border-job-blue" %>
+        </div>
+
+        <div>
+          <%= f.label :password, "Password", class: "block text-sm font-medium text-gray-700" %>
+          <%= f.password_field :password, class: "mt-1 w-full border-gray-300 rounded-lg shadow-sm focus:ring-job-blue focus:border-job-blue" %>
+        </div>
+
+        <div>
+          <%= f.submit "Sign In", class: "w-full bg-job-blue hover:bg-job-blue-light text-white py-3 rounded-lg font-medium transition cursor-pointer" %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="mt-6 text-center">
+      <%= link_to "&larr; Back to JOB509".html_safe, root_path, class: "text-gray-600 hover:text-job-blue" %>
+    </div>
+  </div>
+</div>

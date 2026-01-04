@@ -1,0 +1,35 @@
+<%= form_with model: [resume, referral], class: "space-y-4", data: { turbo_frame: "_top" } do |f| %>
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+    <div>
+      <%= f.label :firstname, t("activerecord.attributes.referral.firstname"), class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+      <%= f.text_field :firstname, class: "mt-1 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:border-job-blue" %>
+    </div>
+
+    <div>
+      <%= f.label :lastname, t("activerecord.attributes.referral.lastname"), class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+      <%= f.text_field :lastname, class: "mt-1 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:border-job-blue" %>
+    </div>
+
+    <div>
+      <%= f.label :email, t("activerecord.attributes.referral.email"), class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+      <%= f.email_field :email, class: "mt-1 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:border-job-blue" %>
+    </div>
+
+    <div>
+      <%= f.label :phone, t("activerecord.attributes.referral.phone"), class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+      <%= f.telephone_field :phone, class: "mt-1 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:border-job-blue" %>
+    </div>
+
+    <div class="md:col-span-2">
+      <%= f.label :relationship, t("activerecord.attributes.referral.relationship"), class: "block text-sm font-medium text-gray-700 dark:text-gray-300" %>
+      <%= f.text_field :relationship, class: "mt-1 w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:border-job-blue", placeholder: "e.g., Former Manager, Colleague" %>
+    </div>
+  </div>
+
+  <div class="flex justify-end space-x-3 pt-4">
+    <button type="button" data-action="click->modal#close" class="px-4 py-2 border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
+      <%= t("actions.cancel") %>
+    </button>
+    <%= f.submit t("actions.save"), class: "px-4 py-2 bg-job-blue hover:bg-job-blue-dark text-white font-medium transition-colors cursor-pointer" %>
+  </div>
+<% end %>
