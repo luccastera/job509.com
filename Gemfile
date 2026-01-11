@@ -37,7 +37,7 @@ gem "prawn-table", "~> 0.2"
 gem "paypal-server-sdk", "~> 0.6"
 
 # SMS
-gem "twilio-ruby", "~> 7.0"
+gem "twilio-ruby", "~> 7.9"
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem "tzinfo-data", platforms: %i[ windows jruby ]
