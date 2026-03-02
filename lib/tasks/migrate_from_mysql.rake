@@ -38,11 +38,10 @@
 #   8. Attendees (depends on: events)
 #   9. Admin data: tags, taggings, lists, coupons, etc.
 
-require "mysql2"
-
 namespace :migrate do
   namespace :from_mysql do
     def mysql_client
+      require "mysql2" unless defined?(Mysql2)
       @mysql_client ||= Mysql2::Client.new(
         host: ENV.fetch("MYSQL_HOST", "localhost"),
         port: ENV.fetch("MYSQL_PORT", 3306).to_i,
