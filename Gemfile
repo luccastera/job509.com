@@ -24,7 +24,7 @@ gem "bcrypt", "~> 3.1.7"
 gem "devise", "~> 4.9"
 
 # CSS Framework
-gem "tailwindcss-rails", "~> 3.0"
+gem "tailwindcss-rails", "~> 4.4"
 
 # Pagination
 gem "pagy", "~> 9.0"
